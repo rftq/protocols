@@ -218,7 +218,7 @@
                         <input type="radio" name="modality" value="mr"> 🧠 МРТ
                     </label>
                     <label>
-                        <input type="radio" name="modality" value="rg"> 📦 РГ
+                        <input type="radio" name="modality" value="rg"> 🩻 РГ
                     </label>
                 </div>
                 
@@ -307,17 +307,15 @@
             return 'ct'; // По умолчанию
         }
 
-        // Получение текста выбранной модальности БЕЗ ЭМОДЗИ для title
+        // Получение текста выбранной модальности с эмодзи для title
         function getSelectedModalityText() {
             for (const radio of modalityRadios) {
                 if (radio.checked) {
-                    // Получаем текст метки и убираем эмодзи
-                    const labelText = radio.parentElement.textContent.trim();
-                    // Удаляем эмодзи (оставляем только буквы)
-                    return labelText.replace(/[🖥️🧠📦\s]/g, '').trim();
+                    // Получаем текст метки (эмодзи + текст)
+                    return radio.parentElement.textContent.trim();
                 }
             }
-            return 'КТ'; // По умолчанию
+            return '🖥️ КТ'; // По умолчанию
         }
 
         // Отображение списка сокращений
@@ -591,7 +589,7 @@
             // Получаем значение поля "Название"
             let title = titleField.value.trim();
             if (title === '..' || title === '') {
-                // Формируем название по умолчанию (БЕЗ ЭМОДЗИ)
+                // Формируем название по умолчанию (С ЭМОДЗИ)
                 const modalityText = getSelectedModalityText();
                 const date = dateField.value;
                 const formattedDate = date.split('-').reverse().slice(0, 2).join('.');
@@ -601,10 +599,10 @@
             // Получаем выбранную модальность (сохраняем для использования после отправки)
             const selectedModality = getSelectedModality();
 
-            // Создаем новый объект (БЕЗ ЭМОДЗИ)
+            // Создаем новый объект (С ЭМОДЗИ В TITLE)
             const newEntry = {
                 id: nextId,
-                title: title, // Уже без эмодзи
+                title: title, // С эмодзи
                 text: text,
                 modality: selectedModality, // Латинские значения: ct, mr, rg
                 patient: patientName.value.trim() || '',

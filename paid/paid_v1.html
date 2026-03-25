@@ -42,7 +42,7 @@
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
         }
 
-        /* заголовок: Новая заявка справа, кнопка слева уменьшена */
+        /* заголовок: кнопка слева, заголовок справа */
         .title-row {
             display: flex;
             align-items: center;
@@ -57,54 +57,68 @@
             border-left: 3px solid #0078d4;
             padding-left: 12px;
             letter-spacing: -0.2px;
-            order: 2;
         }
         .load-json-btn {
-            background: #f0f2f5;
-            border: 1px solid #cbd5e1;
+            background: #0078d4;
+            border: none;
             border-radius: 28px;
-            padding: 4px 14px;
-            font-size: 0.75rem;
+            padding: 8px 20px;
+            font-size: 0.85rem;
             font-weight: 500;
             cursor: pointer;
-            transition: 0.1s;
             display: inline-flex;
             align-items: center;
-            gap: 5px;
+            gap: 8px;
             white-space: nowrap;
-            order: 1;
+            color: white;
+            transition: 0.1s;
         }
         .load-json-btn:hover {
-            background: #e6e9ef;
-            border-color: #0078d4;
+            background: #106ebe;
+            transform: scale(0.98);
         }
 
         .form-group {
             margin-bottom: 1.2rem;
         }
 
-        /* inline label + поле */
-        .inline-field {
+        /* стильные поля как раньше */
+        .field-wrapper {
             display: flex;
             align-items: center;
             gap: 12px;
-            flex-wrap: wrap;
+            background: #f8f9fc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 4px 12px;
+            transition: all 0.2s;
         }
-        .inline-field .field-icon {
+        .field-wrapper:focus-within {
+            border-color: #0078d4;
+            box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.1);
+            background: white;
+        }
+        .field-icon {
             font-size: 1.1rem;
-            font-weight: 500;
-            min-width: 32px;
-            color: #2c3e50;
+            color: #4a5568;
         }
-        .inline-field input, .inline-field .date-input {
-            flex: 1;
-            min-width: 180px;
+        .field-wrapper input {
+            border: none;
+            background: transparent;
+            padding: 10px 0;
+            font-size: 0.9rem;
+            width: 100%;
+            outline: none;
         }
-        .date-small {
-            max-width: 260px;
+        .date-field {
+            width: auto;
+            min-width: 220px;
+        }
+        .date-field input {
+            width: auto;
         }
 
-        /* радио-группа модальности без заголовка */
+        /* радио-группа модальности */
         .radio-group {
             display: flex;
             flex-wrap: wrap;
@@ -129,7 +143,7 @@
             accent-color: #0078d4;
         }
 
-        /* радио-группа для исполнителей */
+        /* исполнитель radios */
         .executor-radios {
             display: flex;
             flex-wrap: wrap;
@@ -152,22 +166,21 @@
             width: auto;
             accent-color: #0078d4;
         }
-        .edit-executors-link {
-            margin-left: auto;
-            font-size: 0.75rem;
-            background: none;
-            border: none;
-            color: #0078d4;
-            cursor: pointer;
-            padding: 4px 8px;
-            text-decoration: underline;
-        }
         .flex-between {
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 12px;
             flex-wrap: wrap;
+            margin-bottom: 6px;
+        }
+        .section-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
         button {
@@ -278,7 +291,72 @@
             background: #f0f2f5;
         }
 
-        /* правый блок viewer */
+        /* правый блок viewer с фильтрами */
+        .viewer-header {
+            margin-bottom: 20px;
+        }
+        .filter-section {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            align-items: flex-end;
+        }
+        .filter-group {
+            flex: 1;
+            min-width: 180px;
+        }
+        .filter-group label {
+            display: block;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 4px;
+        }
+        .filter-group input {
+            width: 100%;
+            padding: 8px 12px;
+            border-radius: 10px;
+            border: 1px solid #d1d9e6;
+            font-size: 0.85rem;
+        }
+        .search-wrapper {
+            position: relative;
+            flex: 1.5;
+        }
+        .search-wrapper input {
+            width: 100%;
+            padding: 8px 35px 8px 12px;
+            border-radius: 10px;
+            border: 1px solid #d1d9e6;
+            font-size: 0.85rem;
+        }
+        .clear-search {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            font-size: 1rem;
+            cursor: pointer;
+            padding: 4px;
+            color: #94a3b8;
+        }
+        .clear-search:hover {
+            color: #475569;
+        }
+        .filter-buttons {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .filter-buttons button {
+            padding: 8px 16px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+        }
+
         .import-area {
             display: flex;
             gap: 12px;
@@ -316,7 +394,7 @@
         }
 
         .json-viewer {
-            max-height: 65vh;
+            max-height: 55vh;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
@@ -328,6 +406,10 @@
             border-radius: 18px;
             padding: 16px 18px;
             border: 1px solid #eef2f6;
+            transition: 0.1s;
+        }
+        .data-card:hover {
+            border-color: #cddfed;
         }
         .card-row {
             display: flex;
@@ -362,7 +444,6 @@
             font-size: 0.85rem;
         }
 
-        /* модальное окно */
         .modal {
             display: none;
             position: fixed;
@@ -383,7 +464,6 @@
             max-width: 480px;
             padding: 24px;
             box-shadow: 0 20px 32px rgba(0, 0, 0, 0.12);
-            border: 1px solid #eef2f8;
         }
         .executor-item {
             display: flex;
@@ -393,12 +473,6 @@
             margin-bottom: 10px;
             padding: 8px 14px;
             border-radius: 40px;
-        }
-        .executor-actions button {
-            width: auto;
-            padding: 4px 12px;
-            margin-left: 8px;
-            font-size: 0.7rem;
         }
 
         @media (max-width: 780px) {
@@ -420,25 +494,25 @@
             <h2>Новая заявка</h2>
         </div>
 
-        <!-- Дата inline -->
+        <!-- Дата стильная -->
         <div class="form-group">
-            <div class="inline-field">
+            <div class="field-wrapper date-field" style="width: auto; display: inline-flex;">
                 <span class="field-icon">📅</span>
-                <input type="datetime-local" id="dateTimeField" class="date-input date-small">
+                <input type="datetime-local" id="dateTimeField" style="width: auto; min-width: 200px;">
             </div>
         </div>
 
-        <!-- ФИО inline -->
+        <!-- ФИО стильное -->
         <div class="form-group">
-            <div class="inline-field">
+            <div class="field-wrapper">
                 <span class="field-icon">👤</span>
                 <input type="text" id="fullNameField" placeholder="Иванов Иван Иванович">
             </div>
         </div>
 
-        <!-- Модальность (только радио, без заголовка) -->
+        <!-- Модальность -->
         <div class="form-group">
-            <div class="radio-group" id="modalityGroup">
+            <div class="radio-group">
                 <label><input type="radio" name="modality" value="РГ" checked> 📦 РГ</label>
                 <label><input type="radio" name="modality" value="ФЛГ"> 🫁 ФЛГ</label>
                 <label><input type="radio" name="modality" value="КТ"> 🖥️ КТ</label>
@@ -446,16 +520,18 @@
             </div>
         </div>
 
-        <!-- Название исследования -->
+        <!-- Название исследования увеличенное -->
         <div class="form-group">
-            <label>📝 Название исследования (автозамена из списка)</label>
-            <input type="text" id="studyNameField" placeholder="Например: кт грудной клетки">
+            <div class="section-label">📝 Название исследования (автозамена из списка)</div>
+            <div class="field-wrapper" style="margin-top: 6px;">
+                <input type="text" id="studyNameField" placeholder="Например: кт грудной клетки" style="width: 100%;">
+            </div>
         </div>
 
-        <!-- Исполнитель radio + кнопка редактирования -->
+        <!-- Исполнитель radio -->
         <div class="form-group">
             <div class="flex-between">
-                <span style="font-size:0.85rem; font-weight:500;">👨‍💻 Исполнитель</span>
+                <div class="section-label">👨‍💻 Исполнитель</div>
                 <button type="button" id="editExecutorsBtn" style="background:none; border:none; color:#0078d4; text-decoration:underline; padding:0; font-size:0.75rem;">✏️ Редактировать список</button>
             </div>
             <div id="executorRadiosContainer" class="executor-radios"></div>
@@ -479,9 +555,10 @@
         </div>
     </div>
 
-    <!-- ПРАВАЯ ПАНЕЛЬ: JSON Viewer -->
+    <!-- ПРАВАЯ ПАНЕЛЬ: JSON Viewer с фильтрами -->
     <div class="card-pane">
-        <h2>🔍 JSON Viewer</h2>
+        <h2 style="margin-bottom: 16px;">🔍 JSON Viewer</h2>
+        
         <div class="import-area">
             <div class="file-button-wrapper">
                 <button class="custom-file-btn" id="customFileBtnRight">📁 Выбрать файл</button>
@@ -489,6 +566,26 @@
             </div>
             <span id="fileNameDisplay" class="file-name">Файл не выбран</span>
         </div>
+
+        <!-- Фильтры -->
+        <div class="viewer-header">
+            <div class="filter-section">
+                <div class="filter-group">
+                    <label>📅 Фильтр по дате (ДД.ММ.ГГГГ)</label>
+                    <input type="text" id="dateFilterInput" placeholder="Например: 23.03.2026">
+                </div>
+                <div class="search-wrapper">
+                    <label>🔍 Поиск</label>
+                    <input type="text" id="searchInput" placeholder="Поиск по ФИО, исследованию, исполнителю...">
+                    <button class="clear-search" id="clearSearchBtn" title="Очистить">✖</button>
+                </div>
+                <div class="filter-buttons">
+                    <button id="applyFilterBtn" class="primary-btn" style="padding: 8px 16px;">Применить</button>
+                    <button id="resetFilterBtn" style="padding: 8px 16px;">Сбросить</button>
+                </div>
+            </div>
+        </div>
+
         <div id="jsonViewerContainer" class="json-viewer">
             <div class="placeholder">✨ Выберите JSON-файл, чтобы увидеть карточки</div>
         </div>
@@ -501,11 +598,11 @@
         <span class="close" id="closeModalBtn" style="float:right; font-size:24px; cursor:pointer;">&times;</span>
         <h3 style="margin-bottom:20px;">📇 Редактор исполнителей</h3>
         <div id="executorListModal"></div>
-        <div class="add-executor" style="display:flex; gap:12px; margin:20px 0;">
-            <input type="text" id="newExecutorInput" placeholder="ФИО исполнителя" style="flex:1;">
+        <div style="display:flex; gap:12px; margin:20px 0;">
+            <input type="text" id="newExecutorInput" placeholder="ФИО исполнителя" style="flex:1; padding:8px; border-radius:10px; border:1px solid #d1d9e6;">
             <button id="addExecutorModalBtn">➕ Добавить</button>
         </div>
-        <div class="modal-buttons" style="display:flex; justify-content:flex-end; gap:12px;">
+        <div style="display:flex; justify-content:flex-end; gap:12px;">
             <button id="saveExecutorsModalBtn" class="primary-btn">💾 Сохранить</button>
             <button id="cancelModalSaveBtn">Отмена</button>
         </div>
@@ -516,7 +613,8 @@
     // ---------- ГЛОБАЛЬНЫЕ ДАННЫЕ ----------
     let executorsList = [];
     let abbreviations = [];
-    let currentLoadedJson = null;
+    let currentLoadedJson = null;      // исходные данные
+    let filteredData = null;            // отфильтрованные данные для отображения
     let selectedFile = null;
     let selectedExecutor = '';
 
@@ -530,7 +628,7 @@
         { abbr: "мрт", full: "Магнитно-резонансная томография" }
     ];
 
-    // ---------- ЗАГРУЗКА / СОХРАНЕНИЕ ----------
+    // ---------- ИНИЦИАЛИЗАЦИЯ ----------
     function loadExecutors() {
         const stored = localStorage.getItem(STORAGE_EXECUTORS);
         if (stored) {
@@ -562,10 +660,6 @@
             const radioId = `exec_${idx}`;
             const isChecked = (selectedExecutor === exec) || (idx === 0 && !selectedExecutor);
             const label = document.createElement('label');
-            label.htmlFor = radioId;
-            label.style.display = 'inline-flex';
-            label.style.alignItems = 'center';
-            label.style.gap = '6px';
             const radio = document.createElement('input');
             radio.type = 'radio';
             radio.name = 'executorRadio';
@@ -634,7 +728,6 @@
                         abbreviations[idx] = { abbr: newAbbr.trim().toLowerCase(), full: newFull.trim() };
                         saveAbbreviationsToLocal();
                         renderAbbrevList();
-                        triggerAutoReplaceOnStudyField();
                     }
                 }
             });
@@ -645,12 +738,11 @@
                 abbreviations.splice(idx, 1);
                 saveAbbreviationsToLocal();
                 renderAbbrevList();
-                triggerAutoReplaceOnStudyField();
             });
         });
     }
 
-    // АВТОЗАМЕНА - ИСПРАВЛЕНА
+    // ИСПРАВЛЕННАЯ АВТОЗАМЕНА
     function autoReplaceAbbreviations(inputElement) {
         let value = inputElement.value;
         let changed = false;
@@ -677,13 +769,6 @@
 
     function escapeRegex(str) {
         return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    }
-
-    function triggerAutoReplaceOnStudyField() {
-        const studyInput = document.getElementById('studyNameField');
-        if (studyInput && studyInput.value.trim() !== '') {
-            autoReplaceAbbreviations(studyInput);
-        }
     }
 
     function setDefaultDateTime() {
@@ -766,42 +851,66 @@
         }
     }
 
-    // Загрузка JSON
-    function loadAndDisplayJson(file) {
-        if (!file) return;
-        selectedFile = file;
-        updateFileNameDisplay(file);
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            try {
-                const parsed = JSON.parse(e.target.result);
-                currentLoadedJson = parsed;
-                renderJsonCards(parsed);
-            } catch (err) {
-                alert('Ошибка парсинга JSON: ' + err.message);
-                document.getElementById('jsonViewerContainer').innerHTML = '<div class="placeholder">❌ Неверный формат JSON</div>';
-                currentLoadedJson = null;
+    // Фильтрация данных
+    function filterData() {
+        if (!currentLoadedJson) return [];
+        let items = [];
+        if (Array.isArray(currentLoadedJson)) items = currentLoadedJson;
+        else if (currentLoadedJson && typeof currentLoadedJson === 'object') items = [currentLoadedJson];
+        else return [];
+
+        const dateFilter = document.getElementById('dateFilterInput').value.trim();
+        const searchText = document.getElementById('searchInput').value.trim().toLowerCase();
+
+        return items.filter(item => {
+            // Фильтр по дате (ДД.ММ.ГГГГ)
+            if (dateFilter) {
+                let itemDate = item.dateTime || '';
+                let formattedDate = '';
+                if (itemDate && itemDate.includes('T')) {
+                    const [datePart] = itemDate.split('T');
+                    const [year, month, day] = datePart.split('-');
+                    formattedDate = `${day}.${month}.${year}`;
+                } else {
+                    formattedDate = itemDate;
+                }
+                if (!formattedDate.includes(dateFilter)) return false;
             }
-        };
-        reader.onerror = () => alert('Не удалось прочитать файл');
-        reader.readAsText(file, 'UTF-8');
+            
+            // Поиск по тексту
+            if (searchText) {
+                const fullName = (item.fullName || '').toLowerCase();
+                const studyName = (item.studyName || '').toLowerCase();
+                const executor = (item.executor || '').toLowerCase();
+                const modality = (item.modality || '').toLowerCase();
+                if (!fullName.includes(searchText) && !studyName.includes(searchText) && 
+                    !executor.includes(searchText) && !modality.includes(searchText)) {
+                    return false;
+                }
+            }
+            return true;
+        });
+    }
+
+    function applyFiltersAndRender() {
+        filteredData = filterData();
+        renderJsonCards(filteredData);
+    }
+
+    function resetFilters() {
+        document.getElementById('dateFilterInput').value = '';
+        document.getElementById('searchInput').value = '';
+        applyFiltersAndRender();
     }
 
     function renderJsonCards(data) {
         const container = document.getElementById('jsonViewerContainer');
         container.innerHTML = '';
-        let items = [];
-        if (Array.isArray(data)) items = data;
-        else if (data && typeof data === 'object') items = [data];
-        else {
-            container.innerHTML = '<div class="placeholder">⚠️ Некорректный JSON</div>';
+        if (!data || data.length === 0) {
+            container.innerHTML = '<div class="placeholder">📭 Нет данных для отображения</div>';
             return;
         }
-        if (items.length === 0) {
-            container.innerHTML = '<div class="placeholder">📭 JSON не содержит данных</div>';
-            return;
-        }
-        for (let record of items) {
+        for (let record of data) {
             const card = document.createElement('div');
             card.className = 'data-card';
             const getVal = (key, def = '—') => (record[key] !== undefined && record[key] !== '') ? record[key] : def;
@@ -829,6 +938,26 @@
             `;
             container.appendChild(card);
         }
+    }
+
+    function loadAndDisplayJson(file) {
+        if (!file) return;
+        selectedFile = file;
+        updateFileNameDisplay(file);
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const parsed = JSON.parse(e.target.result);
+                currentLoadedJson = parsed;
+                applyFiltersAndRender();
+            } catch (err) {
+                alert('Ошибка парсинга JSON: ' + err.message);
+                document.getElementById('jsonViewerContainer').innerHTML = '<div class="placeholder">❌ Неверный формат JSON</div>';
+                currentLoadedJson = null;
+            }
+        };
+        reader.onerror = () => alert('Не удалось прочитать файл');
+        reader.readAsText(file, 'UTF-8');
     }
 
     function escapeHtml(str) {
@@ -919,6 +1048,17 @@
             else { selectedFile = null; currentLoadedJson = null; updateFileNameDisplay(null); document.getElementById('jsonViewerContainer').innerHTML = '<div class="placeholder">✨ Выберите JSON-файл</div>'; }
         });
 
+        // Фильтры
+        document.getElementById('applyFilterBtn').addEventListener('click', applyFiltersAndRender);
+        document.getElementById('resetFilterBtn').addEventListener('click', resetFilters);
+        document.getElementById('clearSearchBtn').addEventListener('click', () => {
+            document.getElementById('searchInput').value = '';
+            applyFiltersAndRender();
+        });
+        // Enter в полях фильтра
+        document.getElementById('searchInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') applyFiltersAndRender(); });
+        document.getElementById('dateFilterInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') applyFiltersAndRender(); });
+
         document.getElementById('addAbbrevBtn').addEventListener('click', () => {
             const abbr = document.getElementById('newAbbr').value.trim().toLowerCase();
             const full = document.getElementById('newFull').value.trim();
@@ -929,7 +1069,6 @@
             renderAbbrevList();
             document.getElementById('newAbbr').value = '';
             document.getElementById('newFull').value = '';
-            triggerAutoReplaceOnStudyField();
         });
 
         window.addEventListener('click', (e) => {
