@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Система сокращений</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0 auto;
+            padding: 10px;
+        }
+
+        .container {
+            display: flex;
+            gap: 20px;
+        }
+
+        .column {
+            flex: 1;
+            max-width: 200px;
+        }
+
+        .column2 {
+            flex: 1;
+        }
+
+        input,
+        button {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 5px;
+            box-sizing: border-box;
+            font-size: 18px;
+        }
+
+        button {
+            background-color: #bbd1ff;
+            color: rgb(92, 92, 92);
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        button:hover {
+            background-color: #FFE5B3;
+        }
+
+        .abbreviation-list {
+            border: 1px solid #ddd;
+            padding: 10px;
+            max-height: 70px;
+            overflow-y: auto;
+            font-size: 11px;
+        }
+
+        .abbreviation-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .delete-btn {
+            background-color: #c5c5c5;
+            padding: 2px 5px;
+        }
+
+        .clear-btn {
+            background-color: #c5c5c5;
+            margin-top: 10px;
+        }
+
+        .import-export {
+            /* margin-top: 10px; */
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .auto-save-status {
+            font-size: 12px;
+            color: #666;
+            margin: 0px;
+            /* margin-top: 5px; */
+            text-align: center;
+        }
+
+        .zag {
+            font-size: 11px;
+            /* color: #666; */
+            margin-top: 5px;
+        }
+
+         .copyTextBtn {
+            width: 60%;
+            margin-right: 12px;
+        }
+
+        .exportTextBtn {
+            width: 30%;
+        }
+
+
+
+    </style>
+</head>
+
+<body>
+    <!-- <h1>Система сокращений</h1> -->
+
+    <div class="container">
+        <div class="column">
+            <!-- <p class="zag">Добавить сокращение</p> -->
+            <input type="text" id="abbrInput" placeholder="Сокращение (например, 'пж')">
+            <input type="text" id="phraseInput" placeholder="Полная фраза (например, 'пожалуйста')">
+            <button id="addBtn">Добавить</button>
+
+            <!-- <p class="zag">Мои сокращения</p> -->
+            <div id="abbreviationList" class="abbreviation-list"></div>
+            <button id="clearBtn" class="clear-btn">Очистить</button>
+
+            <div class="import-export">
+                <!-- <h3>Импорт/Экспорт</h3> -->
+                 <button id="importBtn">Импорт</button>
+                <button id="exportBtn">Экспорт</button><br>
+                <!-- <button id="exportTextBtn">Экспорт текста</button> -->
+                <input type="file" id="fileInput" class="file-input" accept=".json">
+                <div id="autoSaveStatus" class="auto-save-status"></div>
+            </div>
+        </div>
+
+        <div class="column2">
+            <!-- <p class="zag">Текстовое поле</p> -->
+            <textarea id="textInput" rows="14" placeholder="Введите текст здесь... Сокращения заменяются при нажатии пробела или Enter."></textarea>
+            <button class="copyTextBtn" onclick="copy_to_clipboard('textInput');">Скопировать</button>
+            <button id="exportTextBtn" class="exportTextBtn">Сохранить</button>
+            <button id="replaceBtn" hidden>Заменить все сокращения</button>
+        </div>
+    </div>
+
+    <script>
+        // Загрузка сокращений из localStorage
+        let abbreviations = JSON.parse(localStorage.getItem('abbreviations')) || {};
+        let autoSaveInterval;
+        const AUTO_SAVE_INTERVAL = 30 * 60 * 1000; // 30 минут в миллисекундах
+
+        // Элементы DOM
+        const abbrInput = document.getElementById('abbrInput');
+        const phraseInput = document.getElementById('phraseInput');
+        const addBtn = document.getElementById('addBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const abbrList = document.getElementById('abbreviationList');
+        const textInput = document.getElementById('textInput');
+        const replaceBtn = document.getElementById('replaceBtn');
+        const exportBtn = document.getElementById('exportBtn');
+        const exportTextBtn = document.getElementById('exportTextBtn');
+        const importBtn = document.getElementById('importBtn');
+        const fileInput = document.getElementById('fileInput');
+        const autoSaveStatus = document.getElementById('autoSaveStatus');
+
+        // Отображение списка сокращений
+        function renderAbbreviations() {
+            abbrList.innerHTML = '';
+
+            for (const [abbr, phrase] of Object.entries(abbreviations)) {
+                const item = document.createElement('div');
+                item.className = 'abbreviation-item';
+
+                const text = document.createElement('span');
+                text.textContent = `${abbr} → ${phrase}`;
+
+                const deleteBtn = document.createElement('button');
+                deleteBtn.textContent = '×';
+                deleteBtn.className = 'delete-btn';
+                deleteBtn.onclick = () => deleteAbbreviation(abbr);
+
+                item.appendChild(text);
+                item.appendChild(deleteBtn);
+                abbrList.appendChild(item);
+            }
+        }
+
+        // Добавление нового сокращения
+        function addAbbreviation() {
+            const abbr = abbrInput.value.trim();
+            const phrase = phraseInput.value.trim();
+
+            if (abbr && phrase) {
+                abbreviations[abbr] = phrase;
+                saveAbbreviations();
+
+                abbrInput.value = '';
+                phraseInput.value = '';
+
+                renderAbbreviations();
+            } else {
+                alert('Пожалуйста, заполните оба поля!');
+            }
+        }
+
+        // Очистка всех сокращений
+        function clearAbbreviations() {
+            if (confirm('Вы уверены, что хотите очистить весь список сокращений?')) {
+                abbreviations = {};
+                saveAbbreviations();
+                renderAbbreviations();
+            }
+        }
+
+        // Сохранение сокращений в localStorage
+        function saveAbbreviations() {
+            localStorage.setItem('abbreviations', JSON.stringify(abbreviations));
+        }
+
+        // Удаление сокращения
+        function deleteAbbreviation(abbr) {
+            delete abbreviations[abbr];
+            saveAbbreviations();
+            renderAbbreviations();
+        }
+
+        // Замена сокращений при нажатии пробела или Enter
+        function replaceOnKeyPress(event) {
+            if (event.key === ' ' || event.key === 'Enter') {
+                event.preventDefault();
+
+                const text = textInput.value;
+                const cursorPos = textInput.selectionStart;
+
+                // Находим последнее слово
+                const textBeforeCursor = text.substring(0, cursorPos);
+                const lastSpaceIndex = Math.max(
+                    textBeforeCursor.lastIndexOf(' '),
+                    textBeforeCursor.lastIndexOf('\n')
+                );
+                const lastWord = textBeforeCursor.substring(lastSpaceIndex + 1);
+
+                // Проверяем есть ли такое сокращение
+                if (abbreviations.hasOwnProperty(lastWord)) {
+                    // Формируем замену
+                    let replacement = abbreviations[lastWord];
+                    let appendChar = '';
+
+                    if (event.key === ' ') {
+                        appendChar = ' ';
+                    } else if (event.key === 'Enter') {
+                        replacement += '\n';
+                    }
+
+                    // Собираем новый текст
+                    const newText = textBeforeCursor.substring(0, lastSpaceIndex + 1) +
+                        replacement +
+                        appendChar +
+                        text.substring(cursorPos);
+
+                    // Устанавливаем новый текст
+                    textInput.value = newText;
+
+                    // Позиция курсора после замены
+                    const newCursorPos = lastSpaceIndex + 1 + replacement.length + appendChar.length;
+                    textInput.setSelectionRange(newCursorPos, newCursorPos);
+                } else {
+                    // Если не было замены, вставляем оригинальный символ
+                    if (event.key === ' ') {
+                        document.execCommand('insertText', false, ' ');
+                    } else if (event.key === 'Enter') {
+                        document.execCommand('insertText', false, '\n');
+                    }
+                }
+            }
+        }
+
+        // Замена всех сокращений в тексте
+        function replaceAllAbbreviations() {
+            let text = textInput.value;
+
+            // Сортируем сокращения по длине (от самых длинных к самым коротким)
+            const sortedAbbrs = Object.keys(abbreviations).sort((a, b) => b.length - a.length);
+
+            for (const abbr of sortedAbbrs) {
+                const regex = new RegExp(`\\b${escapeRegExp(abbr)}\\b`, 'g');
+                text = text.replace(regex, abbreviations[abbr]);
+            }
+
+            textInput.value = text;
+            textInput.selectionStart = text.length;
+            textInput.selectionEnd = text.length;
+        }
+
+        // Экранирование специальных символов
+        function escapeRegExp(string) {
+            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
+
+        // Экспорт сокращений в JSON
+        function exportAbbreviations() {
+            const data = JSON.stringify(abbreviations, null, 2);
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'сокращения.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Экспорт текста в TXT
+        function exportText() {
+            const text = textInput.value;
+            if (!text.trim()) {
+                alert('Текст для сохранения пуст!');
+                return;
+            }
+
+            const date = new Date();
+            const dateStr = formatDate(date);
+            const filename = `текст_${dateStr}.txt`;
+
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            updateAutoSaveStatus(`Текст сохранен в ${filename}`);
+        }
+
+        // Форматирование даты для имени файла (только дата и часы)
+        function formatDate(date) {
+            const pad = num => num.toString().padStart(2, '0');
+            return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}_${pad(date.getHours())}`;
+        }
+
+        // Автосохранение текста
+        function autoSaveText() {
+            const text = textInput.value;
+            if (text.trim()) {
+                exportText();
+            }
+        }
+
+        // Обновление статуса автосохранения
+        function updateAutoSaveStatus(message) {
+            autoSaveStatus.textContent = message;
+            setTimeout(() => {
+                autoSaveStatus.textContent = `Автосохранение каждые ${AUTO_SAVE_INTERVAL / 60000} минут`;
+            }, 3000);
+        }
+
+        // Импорт сокращений
+        function importAbbreviations(file) {
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+
+                    if (typeof imported !== 'object' || imported === null) {
+                        throw new Error('Неверный формат файла');
+                    }
+
+                    abbreviations = { ...abbreviations, ...imported };
+                    saveAbbreviations();
+                    renderAbbreviations();
+                    alert(`Успешно импортировано ${Object.keys(imported).length} сокращений`);
+                } catch (error) {
+                    alert(`Ошибка импорта: ${error.message}`);
+                }
+            };
+
+            reader.readAsText(file);
+        }
+
+        // Инициализация автосохранения
+        function initAutoSave() {
+            if (autoSaveInterval) clearInterval(autoSaveInterval);
+            autoSaveInterval = setInterval(autoSaveText, AUTO_SAVE_INTERVAL);
+            updateAutoSaveStatus(`Автосохранение каждые ${AUTO_SAVE_INTERVAL / 60000} минут`);
+            setTimeout(autoSaveText, AUTO_SAVE_INTERVAL);
+        }
+
+        // Обработчики событий
+        addBtn.addEventListener('click', addAbbreviation);
+        clearBtn.addEventListener('click', clearAbbreviations);
+        replaceBtn.addEventListener('click', replaceAllAbbreviations);
+        exportBtn.addEventListener('click', exportAbbreviations);
+        exportTextBtn.addEventListener('click', exportText);
+        importBtn.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                importAbbreviations(e.target.files[0]);
+                fileInput.value = '';
+            }
+        });
+        textInput.addEventListener('keydown', replaceOnKeyPress);
+
+
+        const now = new Date();
+        const formattedDate = now.toLocaleDateString('ru-RU', {
+            day: 'numeric',
+            month: 'long'
+        });
+
+        textInput.value = formattedDate  + String.fromCharCode(13, 10) + textInput.value;
+
+
+        function copy_to_clipboard(textInput) {
+            document.getElementById(textInput).select();
+            document.execCommand('copy');
+        }
+
+        // Инициализация
+        renderAbbreviations();
+        initAutoSave();
+    </script>
+</body>
+
+</html>

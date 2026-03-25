@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text to Mind Map</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        .container {
+            display: flex;
+            flex: 1;
+            gap: 20px;
+        }
+        textarea {
+            flex: 1;
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: none;
+        }
+        #chart {
+            flex: 2;
+            height: 100%;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 10px;
+            align-self: flex-start;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Text to Mind Map</h1>
+    <button id="generateBtn">Generate Mind Map</button>
+    <div class="container">
+        <textarea id="inputText" placeholder="Enter your text here...">Main Topic
+    Child 1
+        Grandchild 1
+        Grandchild 2
+    Child 2
+    Child 3
+        Grandchild 3
+            Great Grandchild 1</textarea>
+        <div id="chart"></div>
+    </div>
+
+    <script>
+        document.getElementById('generateBtn').addEventListener('click', generateMindMap);
+
+        function generateMindMap() {
+            const inputText = document.getElementById('inputText').value;
+            const lines = inputText.split('\n').filter(line => line.trim() !== '');
+            
+            if (lines.length === 0) {
+                alert('Please enter some text');
+                return;
+            }
+
+            const root = {
+                name: lines[0].trim(),
+                children: []
+            };
+
+            let stack = [{ node: root, level: 0 }];
+
+            for (let i = 1; i < lines.length; i++) {
+                const line = lines[i];
+                const indent = line.match(/^\s*/)[0].length;
+                const name = line.trim();
+
+                const newNode = {
+                    name: name,
+                    children: []
+                };
+
+                // Find the appropriate parent
+                while (stack.length > 1 && stack[stack.length - 1].level >= indent) {
+                    stack.pop();
+                }
+
+                const parent = stack[stack.length - 1].node;
+                parent.children.push(newNode);
+                stack.push({ node: newNode, level: indent });
+            }
+
+            renderMindMap(root);
+        }
+
+        function renderMindMap(data) {
+            const chart = echarts.init(document.getElementById('chart'));
+            
+            const option = {
+                tooltip: {
+                    trigger: 'item',
+                    triggerOn: 'mousemove'
+                },
+                series: [
+                    {
+                        type: 'tree',
+                        data: [data],
+                        left: '2%',
+                        right: '2%',
+                        top: '8%',
+                        bottom: '20%',
+                        symbol: 'emptyCircle',
+                        orient: 'vertical',
+                        expandAndCollapse: true,
+                        initialTreeDepth: -1, // Expand all nodes by default
+                        label: {
+                            position: 'top',
+                            rotate: 0,
+                            verticalAlign: 'middle',
+                            align: 'center',
+                            fontSize: 14
+                        },
+                        leaves: {
+                            label: {
+                                position: 'right',
+                                verticalAlign: 'middle',
+                                align: 'left'
+                            }
+                        },
+                        emphasis: {
+                            focus: 'descendant'
+                        },
+                        animationDurationUpdate: 750
+                    }
+                ]
+            };
+
+            chart.setOption(option);
+            
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                chart.resize();
+            });
+        }
+
+        // Generate initial mind map
+        generateMindMap();
+    </script>
+</body>
+</html>

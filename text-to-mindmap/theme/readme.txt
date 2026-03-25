@@ -1,0 +1,10 @@
+<script src="echarts.js"></script>
+<!-- import vintage theme -->
+<script src="theme/vintage.js"></script>
+<script>
+// The second parameter is the name of the theme imported
+var chart = echarts.init(document.getElementById('main'), 'vintage');
+chart.setOption({
+    ...
+});
+</script>

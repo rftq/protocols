@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Поиск по ключевым словам в TXT</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .search-container {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+        }
+
+        #keywords {
+            width: 100%;
+            padding: 8px;
+            margin: 10px 0;
+        }
+
+        button {
+            padding: 8px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .result-item {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            position: relative;
+        }
+
+        .highlight {
+            background-color: yellow;
+            font-weight: bold;
+        }
+
+        .no-results {
+            color: #666;
+            font-style: italic;
+        }
+
+        .line-number {
+            color: #666;
+            font-size: 0.9em;
+            margin-right: 10px;
+        }
+
+        #file-info {
+            margin: 10px 0;
+            font-style: italic;
+        }
+
+        .copy-btn {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            background-color: #2196F3;
+            padding: 4px 8px;
+            font-size: 12px;
+        }
+
+        .copy-btn:hover {
+            background-color: #0b7dda;
+        }
+
+        .copied-notice {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            background-color: #4CAF50;
+            color: white;
+            padding: 4px 8px;
+            font-size: 12px;
+            border-radius: 4px;
+            display: none;
+        }
+
+
+        .sort-buttons {
+            margin: 10px 0;
+            display: flex;
+            gap: 10px;
+        }
+
+        .sort-buttons button {
+            background-color: #2196F3;
+        }
+
+        .sort-buttons button:hover {
+            background-color: #0b7dda;
+        }
+
+        .sort-buttons button.active {
+            background-color: #0d47a1;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- <h3>Поиск по ключевым словам в текстовом файле</h3> -->
+
+    <div class="search-container">
+        <div>
+            <label for="file-input">Выберите текстовый файл:</label>
+            <input type="file" id="file-input" accept=".txt">
+        </div>
+        <div id="file-info">Файл не загружен</div>
+
+        <!-- <label for="keywords">Введите ключевые слова (разделяйте пробелом или запятой):</label> -->
+        <input type="text" id="keywords"
+            placeholder="Введите ключевые слова (разделяйте пробелом или запятой), например: JavaScript, поиск, текст"
+            disabled>
+        <div class="sort-buttons">
+            <button id="sort-asc">С начала файла ↑</button>
+            <button id="sort-desc">С конца файла ↓</button>
+        </div>
+        <button id="search-btn" disabled>Искать</button>
+        <button id="reset-btn">Сбросить</button>
+    </div>
+
+    <div id="results"></div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
