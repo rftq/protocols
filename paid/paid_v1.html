@@ -42,6 +42,7 @@
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
         }
 
+        /* заголовок: кнопка справа, заголовок слева */
         .title-row {
             display: flex;
             align-items: center;
@@ -81,7 +82,7 @@
             margin-bottom: 1rem;
         }
 
-        /* уменьшенные поля даты и ФИО */
+        /* компактные поля */
         .compact-field {
             display: flex;
             align-items: center;
@@ -348,10 +349,6 @@
             color: #475569;
             background: #f1f5f9;
         }
-        .search-wrapper {
-            position: relative;
-            flex: 1.5;
-        }
 
         .import-area {
             display: flex;
@@ -409,27 +406,19 @@
         }
         .card-row {
             display: flex;
-            align-items: baseline;
+            align-items: center;
             gap: 12px;
-            flex-wrap: wrap;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             font-size: 0.9rem;
+            flex-wrap: wrap;
         }
         .card-icon {
             font-size: 1.2rem;
-            min-width: 30px;
-        }
-        .card-label {
-            font-weight: 600;
-            color: #2d3748;
-            min-width: 100px;
+            min-width: 32px;
         }
         .card-value {
             color: #1a202c;
-            background: #f7fafc;
-            padding: 3px 10px;
-            border-radius: 30px;
-            font-size: 0.85rem;
+            font-weight: 500;
         }
         .placeholder {
             text-align: center;
@@ -486,8 +475,8 @@
     <!-- ЛЕВАЯ ПАНЕЛЬ -->
     <div class="card-pane">
         <div class="title-row">
-            <button class="load-json-btn" id="loadJsonBtnLeft">📂 Загрузить JSON</button>
             <h2>Новая заявка</h2>
+            <button class="load-json-btn" id="loadJsonBtnLeft">📂 Загрузить JSON</button>
         </div>
 
         <!-- Дата компактная -->
@@ -573,7 +562,7 @@
                         <button class="clear-filter" id="clearDateFilter" title="Очистить">✖</button>
                     </div>
                 </div>
-                <div class="filter-group search-wrapper">
+                <div class="filter-group">
                     <label>🔍 Поиск</label>
                     <div class="filter-wrapper">
                         <input type="text" id="searchInput" placeholder="Поиск по ФИО, исследованию, исполнителю...">
@@ -772,13 +761,19 @@
         return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
 
-    // Обработчик ввода с задержкой для автозамены
-    let replaceTimeout;
+    // Обработчик ввода с немедленной автозаменой
     function handleStudyInput(e) {
-        clearTimeout(replaceTimeout);
-        replaceTimeout = setTimeout(() => {
-            autoReplaceAbbreviations(e.target);
-        }, 50);
+        const input = e.target;
+        const oldValue = input.value;
+        
+        // Применяем автозамену
+        autoReplaceAbbreviations(input);
+        
+        // Если значение изменилось, вызываем событие input для обновления
+        if (input.value !== oldValue) {
+            const event = new Event('input', { bubbles: true });
+            input.dispatchEvent(event);
+        }
     }
 
     function setDefaultDateTime() {
@@ -805,6 +800,16 @@
         if (!executor) throw new Error('Нет доступных исполнителей');
         const studyName = studyNameRaw || 'Не указано';
         return { dateRaw, fullName, modality, studyName, executor };
+    }
+
+    function formatDateTimeForDisplay(dateTimeStr) {
+        if (!dateTimeStr) return '—';
+        if (dateTimeStr.includes('T')) {
+            const [datePart, timePart] = dateTimeStr.split('T');
+            const [year, month, day] = datePart.split('-');
+            return `${day}.${month}.${year} ${timePart}`;
+        }
+        return dateTimeStr;
     }
 
     function generateFileName(modality, dateTimeStr) {
@@ -861,7 +866,7 @@
         }
     }
 
-    // Фильтрация данных (автоматическая при изменении фильтров)
+    // Фильтрация данных
     function filterAndRender() {
         if (!currentLoadedJson) {
             document.getElementById('jsonViewerContainer').innerHTML = '<div class="placeholder">✨ Выберите JSON-файл, чтобы увидеть карточки</div>';
@@ -880,7 +885,6 @@
         const searchText = document.getElementById('searchInput').value.trim().toLowerCase();
 
         const filtered = items.filter(item => {
-            // Фильтр по дате
             if (dateFilter) {
                 let itemDate = item.dateTime || '';
                 let formattedDate = '';
@@ -893,7 +897,6 @@
                 if (formattedDate !== dateFilter) return false;
             }
             
-            // Поиск по тексту
             if (searchText) {
                 const fullName = (item.fullName || '').toLowerCase();
                 const studyName = (item.studyName || '').toLowerCase();
@@ -910,6 +913,14 @@
         renderJsonCards(filtered);
     }
 
+    function getModalityEmoji(modality) {
+        if (modality === 'РГ') return '📦';
+        if (modality === 'ФЛГ') return '🫁';
+        if (modality === 'КТ') return '🖥️';
+        if (modality === 'МРТ') return '🧠';
+        return '📡';
+    }
+
     function renderJsonCards(data) {
         const container = document.getElementById('jsonViewerContainer');
         container.innerHTML = '';
@@ -917,31 +928,38 @@
             container.innerHTML = '<div class="placeholder">📭 Нет данных для отображения</div>';
             return;
         }
+        
         for (let record of data) {
             const card = document.createElement('div');
             card.className = 'data-card';
-            const getVal = (key, def = '—') => (record[key] !== undefined && record[key] !== '') ? record[key] : def;
-            let displayDate = getVal('dateTime');
-            if (displayDate !== '—' && displayDate.includes('T')) {
-                try {
-                    const [datePart, timePart] = displayDate.split('T');
-                    const [year, month, day] = datePart.split('-');
-                    displayDate = `${day}.${month}.${year} ${timePart}`;
-                } catch(e) {}
-            }
-            let modalityVal = getVal('modality');
-            let modalityEmoji = '';
-            if (modalityVal.includes('РГ')) modalityEmoji = '📦';
-            else if (modalityVal.includes('ФЛГ')) modalityEmoji = '🫁';
-            else if (modalityVal.includes('КТ')) modalityEmoji = '🖥️';
-            else if (modalityVal.includes('МРТ')) modalityEmoji = '🧠';
-            else modalityEmoji = '📡';
+            
+            const displayDate = formatDateTimeForDisplay(record.dateTime);
+            const modalityEmoji = getModalityEmoji(record.modality);
+            const fullName = record.fullName || '—';
+            const studyName = record.studyName || 'Не указано';
+            const executor = record.executor || '—';
+            
             card.innerHTML = `
-                <div class="card-row"><span class="card-icon">📅</span><span class="card-label">Дата:</span><span class="card-value">${escapeHtml(displayDate)}</span></div>
-                <div class="card-row"><span class="card-icon">👤</span><span class="card-label">ФИО:</span><span class="card-value">${escapeHtml(getVal('fullName'))}</span></div>
-                <div class="card-row"><span class="card-icon">${modalityEmoji}</span><span class="card-label">Модальность:</span><span class="card-value">${escapeHtml(modalityVal)}</span></div>
-                <div class="card-row"><span class="card-icon">📝</span><span class="card-label">Исследование:</span><span class="card-value">${escapeHtml(getVal('studyName'))}</span></div>
-                <div class="card-row"><span class="card-icon">👨‍💻</span><span class="card-label">Исполнитель:</span><span class="card-value">${escapeHtml(getVal('executor'))}</span></div>
+                <div class="card-row">
+                    <span class="card-icon">📅</span>
+                    <span class="card-value">${escapeHtml(displayDate)}</span>
+                </div>
+                <div class="card-row">
+                    <span class="card-icon">👤</span>
+                    <span class="card-value">${escapeHtml(fullName)}</span>
+                </div>
+                <div class="card-row">
+                    <span class="card-icon">${modalityEmoji}</span>
+                    <span class="card-value">${escapeHtml(record.modality)}</span>
+                </div>
+                <div class="card-row">
+                    <span class="card-icon">📝</span>
+                    <span class="card-value">${escapeHtml(studyName)}</span>
+                </div>
+                <div class="card-row">
+                    <span class="card-icon">👨‍💻</span>
+                    <span class="card-value">${escapeHtml(executor)}</span>
+                </div>
             `;
             container.appendChild(card);
         }
@@ -1058,7 +1076,7 @@
             else { selectedFile = null; currentLoadedJson = null; updateFileNameDisplay(null); document.getElementById('jsonViewerContainer').innerHTML = '<div class="placeholder">✨ Выберите JSON-файл</div>'; }
         });
 
-        // Фильтры с автоматическим применением
+        // Фильтры
         const dateFilter = document.getElementById('dateFilterInput');
         const searchInput = document.getElementById('searchInput');
         const clearDateBtn = document.getElementById('clearDateFilter');

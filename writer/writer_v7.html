@@ -699,13 +699,7 @@
         
         textInput.addEventListener('keydown', replaceOnKeyPress);
 
-        const now = new Date();
-        const formattedDate = now.toLocaleDateString('ru-RU', {
-            day: 'numeric',
-            month: 'long'
-        });
-
-        textInput.value = formattedDate + String.fromCharCode(13, 10) + textInput.value;
+        // УДАЛЕНО: автоматическая вставка даты в текстовое поле
 
         function copy_to_clipboard(textInput) {
             document.getElementById(textInput).select();
