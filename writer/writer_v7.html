@@ -102,12 +102,30 @@
         }
 
         .copyTextBtn {
-            width: 60%;
-            margin-right: 12px;
+            width: 48%;
+            margin-right: 2%;
         }
 
         .exportTextBtn {
-            width: 30%;
+            width: 48%;
+        }
+        
+        .submitBtn {
+            width: 100%;
+            margin-top: 10px;
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        .submitBtn:hover {
+            background-color: #45a049;
+        }
+        
+        .file-info {
+            font-size: 11px;
+            color: #666;
+            margin-top: 5px;
+            word-break: break-all;
         }
 
         .meta-fields {
@@ -126,6 +144,12 @@
 
         .meta-fields input[type="date"] {
             font-family: Arial, sans-serif;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -149,10 +173,16 @@
                 <input type="file" id="fileInput" class="file-input" accept=".json">
                 <div id="autoSaveStatus" class="auto-save-status"></div>
             </div>
+            
+            <!-- Кнопка для загрузки JSON-файла с данными -->
+            <p class="zag">Работа с JSON</p>
+            <button id="loadDataFileBtn">Загрузить JSON для отправки</button>
+            <input type="file" id="dataFileInput" class="file-input" accept=".json">
+            <div id="dataFileInfo" class="file-info">Файл не загружен</div>
         </div>
 
         <div class="column2">
-            <!-- Новые поля над текстовым полем -->
+            <!-- Поля над текстовым полем -->
             <div class="meta-fields">
                 <select id="modalitySelect">
                     <option value="КТ">КТ</option>
@@ -168,10 +198,16 @@
             </div>
             
             <p class="zag">Текстовое поле</p>
-            <textarea id="textInput" rows="22"
+            <textarea id="textInput" rows="20"
                 placeholder="Введите текст здесь... Сокращения заменяются при нажатии пробела или Enter."></textarea>
-            <button class="copyTextBtn" onclick="copy_to_clipboard('textInput');">Скопировать</button>
-            <button id="exportTextBtn" class="exportTextBtn">Сохранить</button>
+            
+            <div class="button-group">
+                <button class="copyTextBtn" onclick="copy_to_clipboard('textInput');">Скопировать</button>
+                <button class="exportTextBtn" id="exportTextBtn">Сохранить</button>
+            </div>
+            
+            <!-- Кнопка отправки -->
+            <button id="submitBtn" class="submitBtn">Отправить в JSON</button>
             <button id="replaceBtn" hidden>Заменить все сокращения</button>
         </div>
     </div>
@@ -181,6 +217,11 @@
         let abbreviations = JSON.parse(localStorage.getItem('abbreviations')) || {};
         let autoSaveInterval;
         const AUTO_SAVE_INTERVAL = 30 * 60 * 1000; // 30 минут в миллисекундах
+
+        // Переменные для работы с JSON-файлом
+        let jsonData = null;
+        let jsonFileName = '';
+        let nextId = 1001;
 
         // Элементы DOM
         const abbrInput = document.getElementById('abbrInput');
@@ -201,6 +242,12 @@
         const dateField = document.getElementById('dateField');
         const patientName = document.getElementById('patientName');
         const titleField = document.getElementById('titleField');
+        
+        // Элементы для работы с JSON
+        const loadDataFileBtn = document.getElementById('loadDataFileBtn');
+        const dataFileInput = document.getElementById('dataFileInput');
+        const dataFileInfo = document.getElementById('dataFileInfo');
+        const submitBtn = document.getElementById('submitBtn');
 
         // Установка сегодняшней даты в поле даты
         function setTodayDate() {
@@ -439,6 +486,105 @@
             reader.readAsText(file);
         }
 
+        // Загрузка JSON-файла с данными
+        function loadDataFile(file) {
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                try {
+                    jsonData = JSON.parse(e.target.result);
+                    jsonFileName = file.name;
+                    
+                    // Определяем следующий доступный ID
+                    if (Array.isArray(jsonData)) {
+                        const maxId = jsonData.reduce((max, item) => {
+                            return item.id && item.id > max ? item.id : max;
+                        }, 0);
+                        nextId = maxId + 1;
+                    } else {
+                        jsonData = [];
+                        nextId = 1001;
+                    }
+                    
+                    dataFileInfo.textContent = `Загружен: ${jsonFileName} (ID: ${nextId})`;
+                    alert(`Файл успешно загружен! Следующий ID: ${nextId}`);
+                } catch (error) {
+                    alert(`Ошибка загрузки файла: ${error.message}`);
+                    jsonData = null;
+                    dataFileInfo.textContent = 'Ошибка загрузки файла';
+                }
+            };
+
+            reader.readAsText(file);
+        }
+
+        // Отправка данных в JSON
+        function submitToJson() {
+            // Проверяем, загружен ли файл
+            if (!jsonData) {
+                alert('Сначала загрузите JSON-файл для отправки!');
+                return;
+            }
+
+            // Проверяем, заполнено ли текстовое поле
+            const text = textInput.value.trim();
+            if (!text) {
+                alert('Текстовое поле пустое!');
+                return;
+            }
+
+            // Получаем значение поля "Название"
+            let title = titleField.value.trim();
+            if (title === '..' || title === '') {
+                // Формируем название по умолчанию
+                const modality = modalitySelect.value;
+                const date = dateField.value;
+                const formattedDate = date.split('-').reverse().slice(0, 2).join('.');
+                title = `${modality} от ${formattedDate}`;
+            }
+
+            // Создаем новый объект
+            const newEntry = {
+                id: nextId,
+                title: title,
+                text: text,
+                modality: modalitySelect.value.toLowerCase(),
+                patient: patientName.value.trim() || '',
+                date: dateField.value
+            };
+
+            // Добавляем в массив
+            jsonData.push(newEntry);
+
+            // Сохраняем файл
+            const data = JSON.stringify(jsonData, null, 2);
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = jsonFileName || 'data.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            // Увеличиваем ID для следующей записи
+            nextId++;
+
+            // Очищаем поля
+            textInput.value = '';
+            patientName.value = '';
+            titleField.value = '..';
+            modalitySelect.value = 'КТ';
+            setTodayDate();
+
+            // Обновляем информацию о файле
+            dataFileInfo.textContent = `Загружен: ${jsonFileName} (ID: ${nextId})`;
+            
+            alert('Данные успешно добавлены и файл сохранен!');
+        }
+
         // Инициализация автосохранения
         function initAutoSave() {
             if (autoSaveInterval) clearInterval(autoSaveInterval);
@@ -460,6 +606,18 @@
                 fileInput.value = '';
             }
         });
+        
+        // Обработчики для работы с JSON-файлом
+        loadDataFileBtn.addEventListener('click', () => dataFileInput.click());
+        dataFileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                loadDataFile(e.target.files[0]);
+                dataFileInput.value = '';
+            }
+        });
+        
+        submitBtn.addEventListener('click', submitToJson);
+        
         textInput.addEventListener('keydown', replaceOnKeyPress);
 
         const now = new Date();
