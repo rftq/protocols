@@ -290,6 +290,24 @@
             dateField.value = `${year}-${month}-${day}`;
         }
 
+        // Функция для форматирования даты и времени для имени файла
+        function formatFilenameDate() {
+            const now = new Date();
+            
+            // Месяц: 3-буквенное сокращение на английском
+            const months = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+            const month = months[now.getMonth()];
+            
+            // День
+            const day = now.getDate();
+            
+            // Часы и минуты
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            
+            return `pr_${day}${month}_${hours}-${minutes}`;
+        }
+
         // Функция для очистки поля "Название" при фокусе
         function clearDefaultText(element) {
             if (element.value === '..') {
@@ -619,7 +637,11 @@
 
             const a = document.createElement('a');
             a.href = url;
-            a.download = jsonFileName || 'data.json';
+            
+            // Генерируем имя файла в формате pr_14mar_23-18
+            const filename = formatFilenameDate() + '.json';
+            a.download = filename;
+            
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -639,7 +661,7 @@
             // Обновляем информацию о файле
             dataFileInfo.textContent = `Загружен: ${jsonFileName} (ID: ${nextId})`;
             
-            alert('Данные успешно добавлены и файл сохранен!');
+            alert(`Данные успешно добавлены! Файл сохранен как: ${filename}`);
         }
 
         // Инициализация автосохранения

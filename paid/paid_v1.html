@@ -42,7 +42,6 @@
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
         }
 
-        /* заголовок: кнопка слева, заголовок справа */
         .title-row {
             display: flex;
             align-items: center;
@@ -79,43 +78,40 @@
         }
 
         .form-group {
-            margin-bottom: 1.2rem;
+            margin-bottom: 1rem;
         }
 
-        /* стильные поля как раньше */
-        .field-wrapper {
+        /* уменьшенные поля даты и ФИО */
+        .compact-field {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             background: #f8f9fc;
             border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 4px 12px;
+            border-radius: 10px;
+            padding: 2px 10px;
             transition: all 0.2s;
         }
-        .field-wrapper:focus-within {
+        .compact-field:focus-within {
             border-color: #0078d4;
             box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.1);
             background: white;
         }
         .field-icon {
-            font-size: 1.1rem;
+            font-size: 1rem;
             color: #4a5568;
         }
-        .field-wrapper input {
+        .compact-field input {
             border: none;
             background: transparent;
-            padding: 10px 0;
+            padding: 6px 0;
             font-size: 0.9rem;
             width: 100%;
             outline: none;
         }
         .date-field {
             width: auto;
-            min-width: 220px;
-        }
-        .date-field input {
-            width: auto;
+            min-width: 200px;
         }
 
         /* радио-группа модальности */
@@ -297,14 +293,15 @@
         }
         .filter-section {
             display: flex;
-            gap: 12px;
+            gap: 16px;
             flex-wrap: wrap;
             margin-bottom: 20px;
             align-items: flex-end;
         }
         .filter-group {
             flex: 1;
-            min-width: 180px;
+            min-width: 200px;
+            position: relative;
         }
         .filter-group label {
             display: block;
@@ -313,25 +310,23 @@
             color: #4a5568;
             margin-bottom: 4px;
         }
-        .filter-group input {
-            width: 100%;
-            padding: 8px 12px;
-            border-radius: 10px;
-            border: 1px solid #d1d9e6;
-            font-size: 0.85rem;
-        }
-        .search-wrapper {
+        .filter-wrapper {
             position: relative;
-            flex: 1.5;
+            display: flex;
+            align-items: center;
         }
-        .search-wrapper input {
+        .filter-wrapper input {
             width: 100%;
-            padding: 8px 35px 8px 12px;
+            padding: 8px 32px 8px 12px;
             border-radius: 10px;
             border: 1px solid #d1d9e6;
             font-size: 0.85rem;
+            background: white;
         }
-        .clear-search {
+        .filter-wrapper input[type="date"] {
+            padding: 8px 32px 8px 12px;
+        }
+        .clear-filter {
             position: absolute;
             right: 8px;
             top: 50%;
@@ -342,19 +337,20 @@
             cursor: pointer;
             padding: 4px;
             color: #94a3b8;
-        }
-        .clear-search:hover {
-            color: #475569;
-        }
-        .filter-buttons {
             display: flex;
-            gap: 8px;
             align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
         }
-        .filter-buttons button {
-            padding: 8px 16px;
-            font-size: 0.8rem;
-            white-space: nowrap;
+        .clear-filter:hover {
+            color: #475569;
+            background: #f1f5f9;
+        }
+        .search-wrapper {
+            position: relative;
+            flex: 1.5;
         }
 
         .import-area {
@@ -494,17 +490,17 @@
             <h2>Новая заявка</h2>
         </div>
 
-        <!-- Дата стильная -->
+        <!-- Дата компактная -->
         <div class="form-group">
-            <div class="field-wrapper date-field" style="width: auto; display: inline-flex;">
+            <div class="compact-field date-field" style="display: inline-flex; width: auto;">
                 <span class="field-icon">📅</span>
-                <input type="datetime-local" id="dateTimeField" style="width: auto; min-width: 200px;">
+                <input type="datetime-local" id="dateTimeField" style="width: auto; min-width: 190px;">
             </div>
         </div>
 
-        <!-- ФИО стильное -->
+        <!-- ФИО компактное -->
         <div class="form-group">
-            <div class="field-wrapper">
+            <div class="compact-field">
                 <span class="field-icon">👤</span>
                 <input type="text" id="fullNameField" placeholder="Иванов Иван Иванович">
             </div>
@@ -523,7 +519,7 @@
         <!-- Название исследования увеличенное -->
         <div class="form-group">
             <div class="section-label">📝 Название исследования (автозамена из списка)</div>
-            <div class="field-wrapper" style="margin-top: 6px;">
+            <div class="compact-field" style="margin-top: 6px;">
                 <input type="text" id="studyNameField" placeholder="Например: кт грудной клетки" style="width: 100%;">
             </div>
         </div>
@@ -551,7 +547,7 @@
                 <input type="text" id="newFull" placeholder="полная фраза">
                 <button id="addAbbrevBtn">➕ Добавить</button>
             </div>
-            <div style="font-size: 0.7rem; color:#6c757d; margin-top: 8px;">Автозамена работает в реальном времени</div>
+            <div style="font-size: 0.7rem; color:#6c757d; margin-top: 8px;">Автозамена работает в реальном времени (наберите сокращение и пробел)</div>
         </div>
     </div>
 
@@ -567,21 +563,22 @@
             <span id="fileNameDisplay" class="file-name">Файл не выбран</span>
         </div>
 
-        <!-- Фильтры -->
+        <!-- Фильтры без кнопок -->
         <div class="viewer-header">
             <div class="filter-section">
                 <div class="filter-group">
-                    <label>📅 Фильтр по дате (ДД.ММ.ГГГГ)</label>
-                    <input type="text" id="dateFilterInput" placeholder="Например: 23.03.2026">
+                    <label>📅 Фильтр по дате</label>
+                    <div class="filter-wrapper">
+                        <input type="date" id="dateFilterInput" placeholder="Выберите дату">
+                        <button class="clear-filter" id="clearDateFilter" title="Очистить">✖</button>
+                    </div>
                 </div>
-                <div class="search-wrapper">
+                <div class="filter-group search-wrapper">
                     <label>🔍 Поиск</label>
-                    <input type="text" id="searchInput" placeholder="Поиск по ФИО, исследованию, исполнителю...">
-                    <button class="clear-search" id="clearSearchBtn" title="Очистить">✖</button>
-                </div>
-                <div class="filter-buttons">
-                    <button id="applyFilterBtn" class="primary-btn" style="padding: 8px 16px;">Применить</button>
-                    <button id="resetFilterBtn" style="padding: 8px 16px;">Сбросить</button>
+                    <div class="filter-wrapper">
+                        <input type="text" id="searchInput" placeholder="Поиск по ФИО, исследованию, исполнителю...">
+                        <button class="clear-filter" id="clearSearchBtn" title="Очистить">✖</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -613,8 +610,7 @@
     // ---------- ГЛОБАЛЬНЫЕ ДАННЫЕ ----------
     let executorsList = [];
     let abbreviations = [];
-    let currentLoadedJson = null;      // исходные данные
-    let filteredData = null;            // отфильтрованные данные для отображения
+    let currentLoadedJson = null;
     let selectedFile = null;
     let selectedExecutor = '';
 
@@ -742,14 +738,17 @@
         });
     }
 
-    // ИСПРАВЛЕННАЯ АВТОЗАМЕНА
+    // ИСПРАВЛЕННАЯ АВТОЗАМЕНА - работает на пробел и потерю фокуса
     function autoReplaceAbbreviations(inputElement) {
         let value = inputElement.value;
         let changed = false;
+        
         for (let rule of abbreviations) {
             const abbr = rule.abbr;
             const full = rule.full;
             if (!abbr || !full) continue;
+            
+            // Ищем сокращение как отдельное слово (границы слова)
             const regex = new RegExp(`\\b${escapeRegex(abbr)}\\b`, 'gi');
             const newValue = value.replace(regex, full);
             if (newValue !== value) {
@@ -757,9 +756,11 @@
                 changed = true;
             }
         }
+        
         if (changed) {
             const cursorPos = inputElement.selectionStart;
             inputElement.value = value;
+            // Восстанавливаем позицию курсора
             if (cursorPos) {
                 const newPos = Math.min(cursorPos + (value.length - inputElement.value.length), value.length);
                 inputElement.setSelectionRange(newPos, newPos);
@@ -769,6 +770,15 @@
 
     function escapeRegex(str) {
         return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
+    // Обработчик ввода с задержкой для автозамены
+    let replaceTimeout;
+    function handleStudyInput(e) {
+        clearTimeout(replaceTimeout);
+        replaceTimeout = setTimeout(() => {
+            autoReplaceAbbreviations(e.target);
+        }, 50);
     }
 
     function setDefaultDateTime() {
@@ -851,30 +861,36 @@
         }
     }
 
-    // Фильтрация данных
-    function filterData() {
-        if (!currentLoadedJson) return [];
+    // Фильтрация данных (автоматическая при изменении фильтров)
+    function filterAndRender() {
+        if (!currentLoadedJson) {
+            document.getElementById('jsonViewerContainer').innerHTML = '<div class="placeholder">✨ Выберите JSON-файл, чтобы увидеть карточки</div>';
+            return;
+        }
+        
         let items = [];
         if (Array.isArray(currentLoadedJson)) items = currentLoadedJson;
         else if (currentLoadedJson && typeof currentLoadedJson === 'object') items = [currentLoadedJson];
-        else return [];
+        else {
+            document.getElementById('jsonViewerContainer').innerHTML = '<div class="placeholder">⚠️ Некорректный формат данных</div>';
+            return;
+        }
 
-        const dateFilter = document.getElementById('dateFilterInput').value.trim();
+        const dateFilter = document.getElementById('dateFilterInput').value;
         const searchText = document.getElementById('searchInput').value.trim().toLowerCase();
 
-        return items.filter(item => {
-            // Фильтр по дате (ДД.ММ.ГГГГ)
+        const filtered = items.filter(item => {
+            // Фильтр по дате
             if (dateFilter) {
                 let itemDate = item.dateTime || '';
                 let formattedDate = '';
                 if (itemDate && itemDate.includes('T')) {
                     const [datePart] = itemDate.split('T');
-                    const [year, month, day] = datePart.split('-');
-                    formattedDate = `${day}.${month}.${year}`;
+                    formattedDate = datePart;
                 } else {
-                    formattedDate = itemDate;
+                    formattedDate = itemDate.split(' ')[0];
                 }
-                if (!formattedDate.includes(dateFilter)) return false;
+                if (formattedDate !== dateFilter) return false;
             }
             
             // Поиск по тексту
@@ -890,17 +906,8 @@
             }
             return true;
         });
-    }
 
-    function applyFiltersAndRender() {
-        filteredData = filterData();
-        renderJsonCards(filteredData);
-    }
-
-    function resetFilters() {
-        document.getElementById('dateFilterInput').value = '';
-        document.getElementById('searchInput').value = '';
-        applyFiltersAndRender();
+        renderJsonCards(filtered);
     }
 
     function renderJsonCards(data) {
@@ -949,7 +956,7 @@
             try {
                 const parsed = JSON.parse(e.target.result);
                 currentLoadedJson = parsed;
-                applyFiltersAndRender();
+                filterAndRender();
             } catch (err) {
                 alert('Ошибка парсинга JSON: ' + err.message);
                 document.getElementById('jsonViewerContainer').innerHTML = '<div class="placeholder">❌ Неверный формат JSON</div>';
@@ -1025,7 +1032,10 @@
     // СОБЫТИЯ
     function setupEventListeners() {
         const studyInput = document.getElementById('studyNameField');
-        if (studyInput) studyInput.addEventListener('input', () => autoReplaceAbbreviations(studyInput));
+        if (studyInput) {
+            studyInput.addEventListener('input', handleStudyInput);
+            studyInput.addEventListener('blur', () => autoReplaceAbbreviations(studyInput));
+        }
 
         document.getElementById('addToJsonBtn').addEventListener('click', addToJson);
         document.getElementById('editExecutorsBtn').addEventListener('click', openExecutorModal);
@@ -1048,16 +1058,16 @@
             else { selectedFile = null; currentLoadedJson = null; updateFileNameDisplay(null); document.getElementById('jsonViewerContainer').innerHTML = '<div class="placeholder">✨ Выберите JSON-файл</div>'; }
         });
 
-        // Фильтры
-        document.getElementById('applyFilterBtn').addEventListener('click', applyFiltersAndRender);
-        document.getElementById('resetFilterBtn').addEventListener('click', resetFilters);
-        document.getElementById('clearSearchBtn').addEventListener('click', () => {
-            document.getElementById('searchInput').value = '';
-            applyFiltersAndRender();
-        });
-        // Enter в полях фильтра
-        document.getElementById('searchInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') applyFiltersAndRender(); });
-        document.getElementById('dateFilterInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') applyFiltersAndRender(); });
+        // Фильтры с автоматическим применением
+        const dateFilter = document.getElementById('dateFilterInput');
+        const searchInput = document.getElementById('searchInput');
+        const clearDateBtn = document.getElementById('clearDateFilter');
+        const clearSearchBtn = document.getElementById('clearSearchBtn');
+        
+        dateFilter.addEventListener('input', filterAndRender);
+        searchInput.addEventListener('input', filterAndRender);
+        clearDateBtn.addEventListener('click', () => { dateFilter.value = ''; filterAndRender(); });
+        clearSearchBtn.addEventListener('click', () => { searchInput.value = ''; filterAndRender(); });
 
         document.getElementById('addAbbrevBtn').addEventListener('click', () => {
             const abbr = document.getElementById('newAbbr').value.trim().toLowerCase();
