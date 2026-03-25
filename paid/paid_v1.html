@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>PAID Research — Minimal Windows 11</title>
+    <title>PAID Research — Умный JSON конструктор</title>
     <style>
         * {
             margin: 0;
@@ -21,7 +21,7 @@
             padding: 2rem;
         }
 
-        /* две колонки с изменённой шириной: левая уже, правая шире */
+        /* две колонки: левая уже, правая шире */
         .app-dashboard {
             max-width: 1400px;
             width: 100%;
@@ -30,7 +30,6 @@
             gap: 24px;
         }
 
-        /* карточки — минималистичный Windows 11, без излишней прозрачности */
         .card-pane {
             background: #ffffff;
             border-radius: 20px;
@@ -44,17 +43,38 @@
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
         }
 
-        h2 {
-            font-size: 1.45rem;
-            font-weight: 500;
-            margin-bottom: 1.5rem;
-            color: #1e1f22;
-            letter-spacing: -0.2px;
+        /* строка заголовка с кнопкой слева */
+        .title-row {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 16px;
+            margin-bottom: 1.5rem;
+        }
+        .title-row h2 {
+            font-size: 1.45rem;
+            font-weight: 500;
+            margin: 0;
             border-left: 3px solid #0078d4;
             padding-left: 14px;
+            letter-spacing: -0.2px;
+        }
+        .load-json-btn {
+            background: #f0f2f5;
+            border: 1px solid #cbd5e1;
+            border-radius: 28px;
+            padding: 6px 16px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.1s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+        .load-json-btn:hover {
+            background: #e6e9ef;
+            border-color: #0078d4;
         }
 
         .form-group {
@@ -88,12 +108,10 @@
             box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.15);
         }
 
-        /* уменьшенное поле даты */
         .date-small {
             max-width: 260px;
         }
 
-        /* радио-группа с эмодзи */
         .radio-group {
             display: flex;
             flex-wrap: wrap;
@@ -116,7 +134,6 @@
 
         .radio-group input {
             width: auto;
-            margin-right: 0;
             accent-color: #0078d4;
         }
 
@@ -156,7 +173,7 @@
             background: #106ebe;
         }
 
-        .export-btn {
+        .add-to-json-btn {
             margin-top: 18px;
             width: 100%;
             background: #0078d4;
@@ -168,11 +185,76 @@
             border-radius: 12px;
         }
 
-        .export-btn:hover {
+        .add-to-json-btn:hover {
             background: #106ebe;
         }
 
-        /* импортная зона стильная */
+        /* блок сокращений */
+        .abbrev-section {
+            margin-top: 20px;
+            border-top: 1px solid #eef2f6;
+            padding-top: 16px;
+        }
+        .abbrev-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .abbrev-list {
+            max-height: 180px;
+            overflow-y: auto;
+            margin-bottom: 12px;
+            background: #fafcff;
+            border-radius: 14px;
+            padding: 4px;
+        }
+        .abbrev-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #ffffff;
+            padding: 6px 10px;
+            margin-bottom: 6px;
+            border-radius: 30px;
+            border: 1px solid #eef2f6;
+            font-size: 0.8rem;
+        }
+        .abbrev-pair {
+            font-family: monospace;
+            background: #f1f5f9;
+            padding: 2px 8px;
+            border-radius: 40px;
+        }
+        .abbrev-actions button {
+            width: auto;
+            padding: 2px 8px;
+            font-size: 0.7rem;
+            margin-left: 6px;
+            background: white;
+        }
+        .add-abbrev {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+        .add-abbrev input {
+            flex: 1;
+            min-width: 100px;
+            padding: 6px 10px;
+            font-size: 0.8rem;
+        }
+        .add-abbrev button {
+            width: auto;
+            padding: 6px 14px;
+            background: #f0f2f5;
+        }
+
+        /* импортная зона (правый блок) */
         .import-area {
             display: flex;
             gap: 12px;
@@ -180,12 +262,10 @@
             flex-wrap: wrap;
             align-items: center;
         }
-
         .file-button-wrapper {
             position: relative;
             display: inline-flex;
         }
-
         .custom-file-btn {
             background: #f0f2f5;
             border: 1px solid #cbd5e1;
@@ -198,16 +278,13 @@
             color: #1e1f22;
             white-space: nowrap;
         }
-
         .custom-file-btn:hover {
             background: #e6e9ef;
             border-color: #0078d4;
         }
-
         #jsonImportFile {
             display: none;
         }
-
         .file-name {
             font-size: 0.8rem;
             color: #4a5568;
@@ -215,23 +292,10 @@
             padding: 5px 12px;
             border-radius: 40px;
             border: 1px solid #e2e8f0;
-            max-width: 200px;
+            max-width: 220px;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
-        }
-
-        .import-action-btn {
-            background: #ffffff;
-            border: 1px solid #cbd5e1;
-            border-radius: 10px;
-            padding: 8px 18px;
-            font-weight: 500;
-        }
-
-        .import-action-btn:hover {
-            background: #f1f5f9;
-            border-color: #0078d4;
         }
 
         /* JSON viewer карточки */
@@ -243,7 +307,6 @@
             gap: 14px;
             padding-right: 4px;
         }
-
         .data-card {
             background: #fefefe;
             border-radius: 18px;
@@ -251,12 +314,9 @@
             border: 1px solid #eef2f6;
             transition: 0.08s linear;
         }
-
         .data-card:hover {
             border-color: #cddfed;
-            background: #ffffff;
         }
-
         .card-row {
             display: flex;
             align-items: baseline;
@@ -265,18 +325,15 @@
             margin-bottom: 8px;
             font-size: 0.9rem;
         }
-
         .card-icon {
             font-size: 1.2rem;
             min-width: 30px;
         }
-
         .card-label {
             font-weight: 600;
             color: #2d3748;
             min-width: 100px;
         }
-
         .card-value {
             color: #1a202c;
             background: #f7fafc;
@@ -284,7 +341,6 @@
             border-radius: 30px;
             font-size: 0.85rem;
         }
-
         .placeholder {
             text-align: center;
             color: #7f8c8d;
@@ -294,7 +350,7 @@
             font-size: 0.85rem;
         }
 
-        /* модальное окно минималистичное */
+        /* модальное окно исполнителей (минималистично) */
         .modal {
             display: none;
             position: fixed;
@@ -308,7 +364,6 @@
             justify-content: center;
             z-index: 1000;
         }
-
         .modal-content {
             background: #ffffff;
             border-radius: 24px;
@@ -319,24 +374,10 @@
             border: 1px solid #eef2f8;
             animation: fadeSlide 0.2s ease;
         }
-
         @keyframes fadeSlide {
-            from {
-                opacity: 0;
-                transform: translateY(6px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(6px);}
+            to { opacity: 1; transform: translateY(0);}
         }
-
-        .modal-content h3 {
-            font-size: 1.4rem;
-            font-weight: 500;
-            margin-bottom: 18px;
-        }
-
         .executor-item {
             display: flex;
             align-items: center;
@@ -346,76 +387,33 @@
             padding: 8px 14px;
             border-radius: 40px;
         }
-
-        .executor-name {
-            font-weight: 500;
-        }
-
         .executor-actions button {
             width: auto;
             padding: 4px 12px;
             margin-left: 8px;
             font-size: 0.7rem;
-            background: white;
-        }
-
-        .add-executor {
-            display: flex;
-            gap: 12px;
-            margin: 20px 0;
-        }
-
-        .modal-buttons {
-            display: flex;
-            justify-content: flex-end;
-            gap: 12px;
-            margin-top: 16px;
-        }
-
-        .close {
-            float: right;
-            font-size: 26px;
-            font-weight: 300;
-            cursor: pointer;
-            line-height: 1;
-        }
-
-        .close:hover {
-            color: #0078d4;
         }
 
         @media (max-width: 780px) {
-            body {
-                padding: 1rem;
-            }
-            .app-dashboard {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-            .date-small {
-                max-width: 100%;
-            }
+            body { padding: 1rem; }
+            .app-dashboard { grid-template-columns: 1fr; gap: 20px; }
+            .date-small { max-width: 100%; }
         }
-
-        ::-webkit-scrollbar {
-            width: 5px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #eef2f8;
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 10px;
-        }
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: #eef2f8; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     </style>
 </head>
 <body>
 
 <div class="app-dashboard">
-    <!-- ЛЕВАЯ ПАНЕЛЬ: уже -->
+    <!-- ЛЕВАЯ ПАНЕЛЬ -->
     <div class="card-pane">
-        <h2>📋 Новая заявка</h2>
+        <div class="title-row">
+            <button class="load-json-btn" id="loadJsonBtnLeft">📂 Загрузить JSON</button>
+            <h2>📋 Новая заявка</h2>
+        </div>
+
         <div class="form-group">
             <label>📅 Дата (ДД.ММ.ГГГГ ЧЧ-ММ)</label>
             <input type="datetime-local" id="dateTimeField" class="date-small">
@@ -434,32 +432,46 @@
             </div>
         </div>
         <div class="form-group">
-            <label>📝 Название исследования (автозамена: кт → Компьютерная томография и т.д.)</label>
+            <label>📝 Название исследования (автозамена из списка)</label>
             <input type="text" id="studyNameField" placeholder="Например: кт грудной клетки">
         </div>
         <div class="form-group">
             <label>👨‍💻 Исполнитель</label>
             <div class="flex-row">
                 <select id="executorSelect"></select>
-                <button type="button" id="editExecutorsBtn" style="width: auto; white-space: nowrap;">✏️ Правка</button>
+                <button type="button" id="editExecutorsBtn" style="width: auto;">✏️ Правка</button>
             </div>
         </div>
-        <button id="exportBtn" class="export-btn">📎 Экспорт в JSON</button>
+
+        <!-- Блок управления сокращениями -->
+        <div class="abbrev-section">
+            <div class="abbrev-title">
+                <span>🔤 Сокращения → полная фраза</span>
+            </div>
+            <div id="abbrevListContainer" class="abbrev-list"></div>
+            <div class="add-abbrev">
+                <input type="text" id="newAbbr" placeholder="сокращение (кт)">
+                <input type="text" id="newFull" placeholder="полная фраза">
+                <button id="addAbbrevBtn">➕ Добавить</button>
+            </div>
+            <div style="font-size: 0.7rem; color:#6c757d; margin-top: 8px;">Автозамена работает в реальном времени</div>
+        </div>
+
+        <button id="addToJsonBtn" class="add-to-json-btn">➕ Добавить в JSON</button>
     </div>
 
-    <!-- ПРАВАЯ ПАНЕЛЬ: JSON Viewer расширенный -->
+    <!-- ПРАВАЯ ПАНЕЛЬ: JSON Viewer с автозагрузкой -->
     <div class="card-pane">
         <h2>🔍 JSON Viewer</h2>
         <div class="import-area">
             <div class="file-button-wrapper">
-                <button class="custom-file-btn" id="customFileBtn">📁 Выбрать файл</button>
+                <button class="custom-file-btn" id="customFileBtnRight">📁 Выбрать файл</button>
                 <input type="file" id="jsonImportFile" accept=".json">
             </div>
             <span id="fileNameDisplay" class="file-name">Файл не выбран</span>
-            <button id="importJsonBtn" class="import-action-btn">📂 Импортировать</button>
         </div>
         <div id="jsonViewerContainer" class="json-viewer">
-            <div class="placeholder">✨ Импортируйте JSON-файл, чтобы увидеть карточки с данными</div>
+            <div class="placeholder">✨ Выберите JSON-файл, чтобы увидеть карточки</div>
         </div>
     </div>
 </div>
@@ -482,28 +494,26 @@
 </div>
 
 <script>
-    // ---------- ДАННЫЕ ----------
-    let executorsList = [];
-    const STORAGE_KEY = 'paid_executors';
-    let selectedFile = null;   // для отображения имени
+    // ---------- ГЛОБАЛЬНЫЕ ДАННЫЕ ----------
+    let executorsList = [];               // исполнители
+    let abbreviations = [];              // [{abbr, full}]
+    let currentLoadedJson = null;        // загруженный JSON (объект или массив)
+    let selectedFile = null;              // для отображения имени файла
 
-    const abbreviationMap = {
-        'рг': 'Рентгенография',
-        'флг': 'Флюорография',
-        'кт': 'Компьютерная томография',
-        'мрт': 'Магнитно-резонансная томография'
-    };
+    const STORAGE_EXECUTORS = 'paid_executors';
+    const STORAGE_ABBREV = 'paid_abbreviations';
 
-    const modalityPrefix = {
-        'РГ': 'rg',
-        'ФЛГ': 'flg',
-        'КТ': 'ct',
-        'МРТ': 'mrt'
-    };
+    // стандартные сокращения
+    const DEFAULT_ABBREV = [
+        { abbr: "рг", full: "Рентгенография" },
+        { abbr: "флг", full: "Флюорография" },
+        { abbr: "кт", full: "Компьютерная томография" },
+        { abbr: "мрт", full: "Магнитно-резонансная томография" }
+    ];
 
-    // ---------- ИНИЦИАЛИЗАЦИЯ ----------
+    // ---------- ЗАГРУЗКА / СОХРАНЕНИЕ ----------
     function loadExecutors() {
-        const stored = localStorage.getItem(STORAGE_KEY);
+        const stored = localStorage.getItem(STORAGE_EXECUTORS);
         if (stored) {
             try {
                 executorsList = JSON.parse(stored);
@@ -518,7 +528,109 @@
     }
 
     function saveExecutorsToLocal() {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(executorsList));
+        localStorage.setItem(STORAGE_EXECUTORS, JSON.stringify(executorsList));
+    }
+
+    function loadAbbreviations() {
+        const stored = localStorage.getItem(STORAGE_ABBREV);
+        if (stored) {
+            try {
+                abbreviations = JSON.parse(stored);
+                if (!Array.isArray(abbreviations)) throw new Error();
+            } catch(e) {
+                abbreviations = [...DEFAULT_ABBREV];
+            }
+        } else {
+            abbreviations = [...DEFAULT_ABBREV];
+        }
+        renderAbbrevList();
+    }
+
+    function saveAbbreviationsToLocal() {
+        localStorage.setItem(STORAGE_ABBREV, JSON.stringify(abbreviations));
+    }
+
+    // отрисовка списка сокращений
+    function renderAbbrevList() {
+        const container = document.getElementById('abbrevListContainer');
+        if (!container) return;
+        container.innerHTML = '';
+        if (abbreviations.length === 0) {
+            container.innerHTML = '<div style="padding: 12px; text-align:center; color:#aaa;">Нет сокращений</div>';
+            return;
+        }
+        abbreviations.forEach((item, idx) => {
+            const div = document.createElement('div');
+            div.className = 'abbrev-item';
+            div.innerHTML = `
+                <div><span class="abbrev-pair">${escapeHtml(item.abbr)} → ${escapeHtml(item.full)}</span></div>
+                <div class="abbrev-actions">
+                    <button class="edit-abbrev" data-idx="${idx}">✏️</button>
+                    <button class="del-abbrev" data-idx="${idx}">🗑️</button>
+                </div>
+            `;
+            container.appendChild(div);
+        });
+
+        // обработчики редактирования и удаления
+        document.querySelectorAll('.edit-abbrev').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const idx = parseInt(btn.getAttribute('data-idx'));
+                const newAbbr = prompt('Сокращение (например, кт):', abbreviations[idx].abbr);
+                if (newAbbr && newAbbr.trim()) {
+                    const newFull = prompt('Полная фраза:', abbreviations[idx].full);
+                    if (newFull && newFull.trim()) {
+                        abbreviations[idx] = { abbr: newAbbr.trim().toLowerCase(), full: newFull.trim() };
+                        saveAbbreviationsToLocal();
+                        renderAbbrevList();
+                        // обновить автозамену в поле (если нужно)
+                        triggerAutoReplaceOnStudyField();
+                    }
+                }
+            });
+        });
+        document.querySelectorAll('.del-abbrev').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const idx = parseInt(btn.getAttribute('data-idx'));
+                abbreviations.splice(idx, 1);
+                saveAbbreviationsToLocal();
+                renderAbbrevList();
+                triggerAutoReplaceOnStudyField();
+            });
+        });
+    }
+
+    // принудительная автозамена в поле исследования
+    function triggerAutoReplaceOnStudyField() {
+        const studyInput = document.getElementById('studyNameField');
+        if (studyInput && studyInput.value.trim() !== '') {
+            autoReplaceAbbreviations(studyInput);
+        }
+    }
+
+    // автозамена с текущим списком сокращений
+    function autoReplaceAbbreviations(inputElement) {
+        let value = inputElement.value;
+        let changed = false;
+        for (let rule of abbreviations) {
+            const abbr = rule.abbr;
+            const full = rule.full;
+            const regex = new RegExp(`\\b${escapeRegex(abbr)}\\b`, 'gi');
+            const newValue = value.replace(regex, full);
+            if (newValue !== value) {
+                value = newValue;
+                changed = true;
+            }
+        }
+        if (changed) {
+            const cursorPos = inputElement.selectionStart;
+            inputElement.value = value;
+            if (cursorPos) inputElement.setSelectionRange(cursorPos, cursorPos);
+        }
+    }
+
+    function escapeRegex(str) {
+        return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
 
     function renderExecutorSelect() {
@@ -547,88 +659,105 @@
         const day = String(now.getDate()).padStart(2, '0');
         const hours = String(now.getHours()).padStart(2, '0');
         const minutes = String(now.getMinutes()).padStart(2, '0');
-        const defaultValue = `${year}-${month}-${day}T${hours}:${minutes}`;
-        const dateInput = document.getElementById('dateTimeField');
-        if (dateInput) dateInput.value = defaultValue;
+        document.getElementById('dateTimeField').value = `${year}-${month}-${day}T${hours}:${minutes}`;
     }
 
-    // Автозамена сокращений
-    function autoReplaceAbbreviations(inputElement) {
-        let value = inputElement.value;
-        let changed = false;
-        for (const [abbr, full] of Object.entries(abbreviationMap)) {
-            const regex = new RegExp(`\\b${abbr}\\b`, 'gi');
-            const newValue = value.replace(regex, full);
-            if (newValue !== value) {
-                value = newValue;
-                changed = true;
-            }
-        }
-        if (changed) {
-            const cursorPos = inputElement.selectionStart;
-            inputElement.value = value;
-            if (cursorPos) inputElement.setSelectionRange(cursorPos, cursorPos);
-        }
-    }
-
-    // ЭКСПОРТ
-    function exportToJson() {
+    // Получение данных из формы
+    function getFormData() {
         const dateRaw = document.getElementById('dateTimeField').value;
-        if (!dateRaw) {
-            alert('Укажите дату и время');
-            return;
-        }
+        if (!dateRaw) throw new Error('Укажите дату');
         const fullName = document.getElementById('fullNameField').value.trim();
-        if (!fullName) {
-            alert('Введите ФИО');
-            return;
-        }
+        if (!fullName) throw new Error('Введите ФИО');
         let modality = '';
         const radios = document.getElementsByName('modality');
-        for (let radio of radios) {
-            if (radio.checked) {
-                modality = radio.value;
-                break;
-            }
-        }
+        for (let r of radios) if (r.checked) { modality = r.value; break; }
         const studyNameRaw = document.getElementById('studyNameField').value.trim();
         const executor = document.getElementById('executorSelect').value;
         const studyName = studyNameRaw || 'Не указано';
-
-        const exportData = {
-            dateTime: dateRaw,
-            fullName: fullName,
-            modality: modality,
-            studyName: studyName,
-            executor: executor,
-            exportTimestamp: new Date().toISOString()
-        };
-
-        const prefix = modalityPrefix[modality] || 'rg';
-        let dateObj = new Date(dateRaw);
-        if (isNaN(dateObj.getTime())) dateObj = new Date();
-        const day = dateObj.getDate();
-        const monthNames = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
-        const monthAbbr = monthNames[dateObj.getMonth()];
-        const hours = String(dateObj.getHours()).padStart(2, '0');
-        const minutes = String(dateObj.getMinutes()).padStart(2, '0');
-        const seconds = String(new Date().getSeconds()).padStart(2, '0');
-        const dateTimeForFile = `${day}${monthAbbr}_${hours}-${minutes}-${seconds}`;
-        const fileName = `PAID_${prefix}_${dateTimeForFile}.json`;
-
-        const jsonStr = JSON.stringify(exportData, null, 2);
-        const blob = new Blob([jsonStr], { type: 'application/json' });
-        const link = document.createElement('a');
-        const url = URL.createObjectURL(blob);
-        link.href = url;
-        link.download = fileName;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
+        return { dateRaw, fullName, modality, studyName, executor };
     }
 
-    // ---------- ИМПОРТ И ОТОБРАЖЕНИЕ КАРТОЧЕК ----------
+    // Формирование имени файла по правилу PAID_rg_23mar_23-13-18.json
+    function generateFileName(modality, dateTimeStr) {
+        const prefixMap = { 'РГ':'rg', 'ФЛГ':'flg', 'КТ':'ct', 'МРТ':'mrt' };
+        const prefix = prefixMap[modality] || 'rg';
+        let dateObj = new Date(dateTimeStr);
+        if (isNaN(dateObj.getTime())) dateObj = new Date();
+        const day = dateObj.getDate();
+        const months = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+        const monthAbbr = months[dateObj.getMonth()];
+        const hours = String(dateObj.getHours()).padStart(2,'0');
+        const minutes = String(dateObj.getMinutes()).padStart(2,'0');
+        const seconds = String(new Date().getSeconds()).padStart(2,'0');
+        return `PAID_${prefix}_${day}${monthAbbr}_${hours}-${minutes}-${seconds}.json`;
+    }
+
+    // Добавить в JSON (основная логика)
+    function addToJson() {
+        try {
+            const formData = getFormData();
+            const newRecord = {
+                dateTime: formData.dateRaw,
+                fullName: formData.fullName,
+                modality: formData.modality,
+                studyName: formData.studyName,
+                executor: formData.executor,
+                addedTimestamp: new Date().toISOString()
+            };
+
+            let baseData = null;
+            if (currentLoadedJson !== null) {
+                baseData = currentLoadedJson;
+            }
+
+            let updatedData;
+            if (baseData === null) {
+                updatedData = [newRecord];
+            } else if (Array.isArray(baseData)) {
+                updatedData = [...baseData, newRecord];
+            } else if (typeof baseData === 'object') {
+                updatedData = [baseData, newRecord];
+            } else {
+                updatedData = [newRecord];
+            }
+
+            const fileName = generateFileName(formData.modality, formData.dateRaw);
+            const jsonStr = JSON.stringify(updatedData, null, 2);
+            const blob = new Blob([jsonStr], { type: 'application/json' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.href = url;
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        } catch (err) {
+            alert(err.message);
+        }
+    }
+
+    // ---------- ЗАГРУЗКА JSON (общая логика) ----------
+    function loadAndDisplayJson(file) {
+        if (!file) return;
+        selectedFile = file;
+        updateFileNameDisplay(file);
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const parsed = JSON.parse(e.target.result);
+                currentLoadedJson = parsed;
+                renderJsonCards(parsed);
+            } catch (err) {
+                alert('Ошибка парсинга JSON: ' + err.message);
+                document.getElementById('jsonViewerContainer').innerHTML = '<div class="placeholder">❌ Неверный формат JSON</div>';
+                currentLoadedJson = null;
+            }
+        };
+        reader.onerror = () => alert('Не удалось прочитать файл');
+        reader.readAsText(file, 'UTF-8');
+    }
+
     function renderJsonCards(data) {
         const container = document.getElementById('jsonViewerContainer');
         container.innerHTML = '';
@@ -639,18 +768,14 @@
             container.innerHTML = '<div class="placeholder">⚠️ Некорректный JSON: ожидается объект или массив</div>';
             return;
         }
-
         if (items.length === 0) {
             container.innerHTML = '<div class="placeholder">📭 JSON не содержит данных</div>';
             return;
         }
-
         for (let record of items) {
             const card = document.createElement('div');
             card.className = 'data-card';
-
             const getVal = (key, def = '—') => (record[key] !== undefined && record[key] !== '') ? record[key] : def;
-
             let displayDate = getVal('dateTime');
             if (displayDate !== '—' && displayDate.includes('T')) {
                 try {
@@ -659,7 +784,6 @@
                     displayDate = `${day}.${month}.${year} ${timePart}`;
                 } catch(e) {}
             }
-
             let modalityVal = getVal('modality');
             let modalityEmoji = '';
             if (modalityVal.includes('РГ')) modalityEmoji = '📦';
@@ -667,33 +791,12 @@
             else if (modalityVal.includes('КТ')) modalityEmoji = '🖥️';
             else if (modalityVal.includes('МРТ')) modalityEmoji = '🧠';
             else modalityEmoji = '📡';
-
             card.innerHTML = `
-                <div class="card-row">
-                    <span class="card-icon">📅</span>
-                    <span class="card-label">Дата:</span>
-                    <span class="card-value">${escapeHtml(displayDate)}</span>
-                </div>
-                <div class="card-row">
-                    <span class="card-icon">👤</span>
-                    <span class="card-label">ФИО:</span>
-                    <span class="card-value">${escapeHtml(getVal('fullName'))}</span>
-                </div>
-                <div class="card-row">
-                    <span class="card-icon">${modalityEmoji}</span>
-                    <span class="card-label">Модальность:</span>
-                    <span class="card-value">${escapeHtml(modalityVal)}</span>
-                </div>
-                <div class="card-row">
-                    <span class="card-icon">📝</span>
-                    <span class="card-label">Исследование:</span>
-                    <span class="card-value">${escapeHtml(getVal('studyName'))}</span>
-                </div>
-                <div class="card-row">
-                    <span class="card-icon">👨‍💻</span>
-                    <span class="card-label">Исполнитель:</span>
-                    <span class="card-value">${escapeHtml(getVal('executor'))}</span>
-                </div>
+                <div class="card-row"><span class="card-icon">📅</span><span class="card-label">Дата:</span><span class="card-value">${escapeHtml(displayDate)}</span></div>
+                <div class="card-row"><span class="card-icon">👤</span><span class="card-label">ФИО:</span><span class="card-value">${escapeHtml(getVal('fullName'))}</span></div>
+                <div class="card-row"><span class="card-icon">${modalityEmoji}</span><span class="card-label">Модальность:</span><span class="card-value">${escapeHtml(modalityVal)}</span></div>
+                <div class="card-row"><span class="card-icon">📝</span><span class="card-label">Исследование:</span><span class="card-value">${escapeHtml(getVal('studyName'))}</span></div>
+                <div class="card-row"><span class="card-icon">👨‍💻</span><span class="card-label">Исполнитель:</span><span class="card-value">${escapeHtml(getVal('executor'))}</span></div>
             `;
             container.appendChild(card);
         }
@@ -709,154 +812,110 @@
         });
     }
 
-    function importJsonFromFile(file) {
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            try {
-                const jsonData = JSON.parse(e.target.result);
-                renderJsonCards(jsonData);
-            } catch (err) {
-                alert('Ошибка парсинга JSON: ' + err.message);
-                document.getElementById('jsonViewerContainer').innerHTML = '<div class="placeholder">❌ Неверный формат JSON</div>';
-            }
-        };
-        reader.onerror = () => alert('Не удалось прочитать файл');
-        reader.readAsText(file, 'UTF-8');
+    function updateFileNameDisplay(file) {
+        const span = document.getElementById('fileNameDisplay');
+        if (file) span.textContent = file.name.length > 30 ? file.name.substring(0, 27) + '...' : file.name;
+        else span.textContent = 'Файл не выбран';
     }
 
-    // ---------- МОДАЛЬНОЕ ОКНО ----------
+    // ---------- МОДАЛЬНОЕ ОКНО ИСПОЛНИТЕЛЕЙ ----------
     let tempExecutors = [];
-
     function openExecutorModal() {
         tempExecutors = [...executorsList];
         renderModalExecutorList();
         document.getElementById('executorModal').style.display = 'flex';
     }
-
     function renderModalExecutorList() {
         const container = document.getElementById('executorListModal');
         if (!container) return;
         container.innerHTML = '';
         if (tempExecutors.length === 0) {
-            const emptyMsg = document.createElement('div');
-            emptyMsg.className = 'executor-item';
-            emptyMsg.innerHTML = '<span style="opacity:0.6;">Нет исполнителей, добавьте нового</span>';
-            container.appendChild(emptyMsg);
+            container.innerHTML = '<div class="executor-item"><span>Нет исполнителей, добавьте нового</span></div>';
         } else {
             tempExecutors.forEach((exec, idx) => {
                 const div = document.createElement('div');
                 div.className = 'executor-item';
-                div.innerHTML = `
-                    <span class="executor-name">${escapeHtml(exec)}</span>
-                    <div class="executor-actions">
-                        <button class="edit-exec-btn" data-index="${idx}">✏️ Ред.</button>
-                        <button class="delete-exec-btn" data-index="${idx}">🗑️ Удалить</button>
-                    </div>
-                `;
+                div.innerHTML = `<span class="executor-name">${escapeHtml(exec)}</span>
+                    <div><button class="edit-exec-modal" data-idx="${idx}">✏️</button>
+                    <button class="del-exec-modal" data-idx="${idx}">🗑️</button></div>`;
                 container.appendChild(div);
             });
-            document.querySelectorAll('.edit-exec-btn').forEach(btn => {
+            document.querySelectorAll('.edit-exec-modal').forEach(btn => {
                 btn.addEventListener('click', (e) => {
-                    const idx = parseInt(btn.getAttribute('data-index'));
-                    const newName = prompt('Введите новое ФИО исполнителя:', tempExecutors[idx]);
-                    if (newName && newName.trim() !== '') {
-                        tempExecutors[idx] = newName.trim();
-                        renderModalExecutorList();
-                    }
+                    const idx = parseInt(btn.getAttribute('data-idx'));
+                    const newName = prompt('Новое ФИО:', tempExecutors[idx]);
+                    if (newName && newName.trim()) { tempExecutors[idx] = newName.trim(); renderModalExecutorList(); }
                 });
             });
-            document.querySelectorAll('.delete-exec-btn').forEach(btn => {
+            document.querySelectorAll('.del-exec-modal').forEach(btn => {
                 btn.addEventListener('click', (e) => {
-                    const idx = parseInt(btn.getAttribute('data-index'));
+                    const idx = parseInt(btn.getAttribute('data-idx'));
                     tempExecutors.splice(idx, 1);
                     renderModalExecutorList();
                 });
             });
         }
     }
-
-    function closeModal() {
-        document.getElementById('executorModal').style.display = 'none';
-    }
-
+    function closeModal() { document.getElementById('executorModal').style.display = 'none'; }
     function saveExecutorsFromModal() {
         if (tempExecutors.length === 0) {
-            if (confirm('Список исполнителей пуст. Продолжить?')) {
-                executorsList = [];
-                saveExecutorsToLocal();
-                renderExecutorSelect();
-                closeModal();
-            }
-        } else {
-            executorsList = [...tempExecutors];
-            saveExecutorsToLocal();
-            renderExecutorSelect();
-            closeModal();
-        }
-    }
-
-    // ---------- ОБНОВЛЕНИЕ ИМЕНИ ФАЙЛА ----------
-    function updateFileNameDisplay(file) {
-        const span = document.getElementById('fileNameDisplay');
-        if (file) {
-            span.textContent = file.name.length > 28 ? file.name.substring(0, 25) + '...' : file.name;
-        } else {
-            span.textContent = 'Файл не выбран';
-        }
+            if (confirm('Список исполнителей пуст. Продолжить?')) { executorsList = []; saveExecutorsToLocal(); renderExecutorSelect(); closeModal(); }
+        } else { executorsList = [...tempExecutors]; saveExecutorsToLocal(); renderExecutorSelect(); closeModal(); }
     }
 
     // ---------- СОБЫТИЯ ----------
     function setupEventListeners() {
+        // Автозамена в поле исследования
         const studyInput = document.getElementById('studyNameField');
         if (studyInput) studyInput.addEventListener('input', () => autoReplaceAbbreviations(studyInput));
 
-        document.getElementById('exportBtn').addEventListener('click', exportToJson);
-        document.getElementById('editExecutorsBtn').addEventListener('click', openExecutorModal);
+        // Добавить в JSON
+        document.getElementById('addToJsonBtn').addEventListener('click', addToJson);
 
-        // стильный выбор файла
+        // Редактор исполнителей
+        document.getElementById('editExecutorsBtn').addEventListener('click', openExecutorModal);
+        document.getElementById('closeModalBtn').addEventListener('click', closeModal);
+        document.getElementById('cancelModalSaveBtn').addEventListener('click', closeModal);
+        document.getElementById('saveExecutorsModalBtn').addEventListener('click', saveExecutorsFromModal);
+        document.getElementById('addExecutorModalBtn').addEventListener('click', () => {
+            const name = document.getElementById('newExecutorInput').value.trim();
+            if (name) { tempExecutors.push(name); document.getElementById('newExecutorInput').value = ''; renderModalExecutorList(); }
+            else alert('Введите ФИО');
+        });
+
+        // Загрузка JSON (правый блок + левая кнопка)
         const fileInput = document.getElementById('jsonImportFile');
-        const customBtn = document.getElementById('customFileBtn');
-        customBtn.addEventListener('click', () => fileInput.click());
+        const customBtnRight = document.getElementById('customFileBtnRight');
+        const loadJsonLeft = document.getElementById('loadJsonBtnLeft');
+
+        customBtnRight.addEventListener('click', () => fileInput.click());
+        loadJsonLeft.addEventListener('click', () => fileInput.click());
         fileInput.addEventListener('change', (e) => {
             if (e.target.files.length) {
-                selectedFile = e.target.files[0];
-                updateFileNameDisplay(selectedFile);
+                loadAndDisplayJson(e.target.files[0]);
             } else {
                 selectedFile = null;
+                currentLoadedJson = null;
                 updateFileNameDisplay(null);
+                document.getElementById('jsonViewerContainer').innerHTML = '<div class="placeholder">✨ Выберите JSON-файл, чтобы увидеть карточки</div>';
             }
         });
 
-        const importBtn = document.getElementById('importJsonBtn');
-        importBtn.addEventListener('click', () => {
-            if (selectedFile) {
-                importJsonFromFile(selectedFile);
-            } else {
-                alert('Сначала выберите JSON-файл');
-            }
+        // Добавление сокращения
+        document.getElementById('addAbbrevBtn').addEventListener('click', () => {
+            const abbr = document.getElementById('newAbbr').value.trim().toLowerCase();
+            const full = document.getElementById('newFull').value.trim();
+            if (!abbr || !full) { alert('Введите и сокращение, и полную фразу'); return; }
+            if (abbreviations.some(a => a.abbr === abbr)) { alert('Такое сокращение уже есть'); return; }
+            abbreviations.push({ abbr, full });
+            saveAbbreviationsToLocal();
+            renderAbbrevList();
+            document.getElementById('newAbbr').value = '';
+            document.getElementById('newFull').value = '';
+            triggerAutoReplaceOnStudyField();
         });
 
-        const closeModalBtn = document.getElementById('closeModalBtn');
-        const cancelModal = document.getElementById('cancelModalSaveBtn');
-        const saveModal = document.getElementById('saveExecutorsModalBtn');
-        const addModalBtn = document.getElementById('addExecutorModalBtn');
-        const newExecutorInput = document.getElementById('newExecutorInput');
-
-        closeModalBtn.addEventListener('click', closeModal);
-        cancelModal.addEventListener('click', closeModal);
-        saveModal.addEventListener('click', saveExecutorsFromModal);
-        addModalBtn.addEventListener('click', () => {
-            const name = newExecutorInput.value.trim();
-            if (name === '') {
-                alert('Введите ФИО исполнителя');
-                return;
-            }
-            tempExecutors.push(name);
-            newExecutorInput.value = '';
-            renderModalExecutorList();
-        });
-
+        // Закрытие модалки по клику вне
         window.addEventListener('click', (e) => {
             const modal = document.getElementById('executorModal');
             if (e.target === modal) closeModal();
@@ -865,12 +924,14 @@
 
     function init() {
         loadExecutors();
+        loadAbbreviations();
         setDefaultDateTime();
         setupEventListeners();
-        // очищаем display файла
+        currentLoadedJson = null;
+        selectedFile = null;
         updateFileNameDisplay(null);
+        document.getElementById('jsonViewerContainer').innerHTML = '<div class="placeholder">✨ Выберите JSON-файл, чтобы увидеть карточки</div>';
     }
-
     init();
 </script>
 </body>
