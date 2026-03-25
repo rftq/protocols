@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>PAID Research Studio — Windows 11 Style</title>
+    <title>PAID Research — Minimal Windows 11</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', 'Segoe UI Variable', system-ui, -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+            font-family: 'Segoe UI', system-ui, -apple-system, 'Segoe UI Variable', 'Roboto', sans-serif;
         }
 
         body {
-            background: linear-gradient(145deg, #f0f2f5 0%, #e6e9ef 100%);
+            background: #f5f5f7;
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -21,47 +21,44 @@
             padding: 2rem;
         }
 
-        /* главный контейнер — макет двух колонок */
+        /* две колонки с изменённой шириной: левая уже, правая шире */
         .app-dashboard {
             max-width: 1400px;
             width: 100%;
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 0.85fr 1.4fr;
             gap: 24px;
-            backdrop-filter: blur(2px);
         }
 
-        /* универсальные карточки Windows 11 */
+        /* карточки — минималистичный Windows 11, без излишней прозрачности */
         .card-pane {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(20px);
-            border-radius: 28px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.7);
-            padding: 28px 24px;
-            transition: all 0.2s ease;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.03);
+            border: 1px solid #eaeef2;
+            padding: 24px 22px;
+            transition: box-shadow 0.1s ease;
         }
 
         .card-pane:hover {
-            background: rgba(255, 255, 255, 0.92);
-            box-shadow: 0 20px 32px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
         }
 
         h2 {
-            font-size: 1.6rem;
+            font-size: 1.45rem;
             font-weight: 500;
             margin-bottom: 1.5rem;
             color: #1e1f22;
             letter-spacing: -0.2px;
             display: flex;
             align-items: center;
-            gap: 12px;
-            border-left: 4px solid #0078d4;
-            padding-left: 16px;
+            gap: 10px;
+            border-left: 3px solid #0078d4;
+            padding-left: 14px;
         }
 
         .form-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.2rem;
         }
 
         label {
@@ -69,51 +66,57 @@
             align-items: center;
             gap: 8px;
             font-weight: 500;
-            font-size: 0.9rem;
-            color: #202124;
-            margin-bottom: 8px;
-            letter-spacing: -0.2px;
+            font-size: 0.85rem;
+            color: #2c2e33;
+            margin-bottom: 6px;
+            letter-spacing: -0.1px;
         }
 
         input, select, button {
-            border-radius: 12px;
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            background: rgba(255, 255, 255, 0.9);
-            padding: 10px 14px;
-            font-size: 0.95rem;
+            border-radius: 10px;
+            border: 1px solid #d1d9e6;
+            background: #ffffff;
+            padding: 8px 12px;
+            font-size: 0.9rem;
             width: 100%;
-            transition: all 0.2s;
+            transition: all 0.15s;
             outline: none;
         }
 
         input:focus, select:focus {
             border-color: #0078d4;
-            box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.2);
-            background: white;
+            box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.15);
         }
 
+        /* уменьшенное поле даты */
+        .date-small {
+            max-width: 260px;
+        }
+
+        /* радио-группа с эмодзи */
         .radio-group {
             display: flex;
-            gap: 24px;
             flex-wrap: wrap;
-            background: rgba(255, 255, 255, 0.6);
-            padding: 8px 12px;
+            gap: 18px;
+            background: #f9fafc;
+            padding: 8px 14px;
             border-radius: 40px;
-            border: 1px solid rgba(0, 0, 0, 0.05);
+            border: 1px solid #e9edf2;
         }
 
         .radio-group label {
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: 8px;
-            font-weight: 400;
+            font-weight: 450;
             cursor: pointer;
             margin: 0;
+            font-size: 0.9rem;
         }
 
         .radio-group input {
             width: auto;
-            margin-right: 4px;
+            margin-right: 0;
             accent-color: #0078d4;
         }
 
@@ -128,15 +131,15 @@
         }
 
         button {
-            background: #ffffffcc;
+            background: #ffffff;
             cursor: pointer;
             font-weight: 500;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            transition: background 0.2s, transform 0.05s;
-            border: 1px solid #c0c4cc;
+            border: 1px solid #cbd5e1;
+            transition: 0.1s linear;
         }
 
         button:active {
@@ -147,7 +150,6 @@
             background: #0078d4;
             border-color: #0078d4;
             color: white;
-            box-shadow: 0 2px 6px rgba(0, 120, 212, 0.2);
         }
 
         button.primary-btn:hover {
@@ -155,55 +157,104 @@
         }
 
         .export-btn {
-            margin-top: 16px;
+            margin-top: 18px;
             width: 100%;
             background: #0078d4;
             color: white;
             border: none;
-            padding: 12px;
-            font-size: 1rem;
+            padding: 10px;
+            font-size: 0.95rem;
             font-weight: 600;
+            border-radius: 12px;
         }
 
         .export-btn:hover {
             background: #106ebe;
         }
 
-        /* Viewer область */
+        /* импортная зона стильная */
         .import-area {
             display: flex;
             gap: 12px;
             margin-bottom: 24px;
             flex-wrap: wrap;
+            align-items: center;
         }
 
-        .import-area input {
-            flex: 1;
-            padding: 8px 12px;
+        .file-button-wrapper {
+            position: relative;
+            display: inline-flex;
         }
 
+        .custom-file-btn {
+            background: #f0f2f5;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.1s;
+            color: #1e1f22;
+            white-space: nowrap;
+        }
+
+        .custom-file-btn:hover {
+            background: #e6e9ef;
+            border-color: #0078d4;
+        }
+
+        #jsonImportFile {
+            display: none;
+        }
+
+        .file-name {
+            font-size: 0.8rem;
+            color: #4a5568;
+            background: #f8f9fc;
+            padding: 5px 12px;
+            border-radius: 40px;
+            border: 1px solid #e2e8f0;
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .import-action-btn {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 8px 18px;
+            font-weight: 500;
+        }
+
+        .import-action-btn:hover {
+            background: #f1f5f9;
+            border-color: #0078d4;
+        }
+
+        /* JSON viewer карточки */
         .json-viewer {
-            max-height: 60vh;
+            max-height: 65vh;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 14px;
             padding-right: 4px;
         }
 
-        /* карточки данных */
         .data-card {
-            background: white;
-            border-radius: 20px;
-            padding: 18px 20px;
-            border: 1px solid #e9ecef;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
-            transition: 0.1s linear;
+            background: #fefefe;
+            border-radius: 18px;
+            padding: 16px 18px;
+            border: 1px solid #eef2f6;
+            transition: 0.08s linear;
         }
 
         .data-card:hover {
-            border-color: #cdd9ed;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+            border-color: #cddfed;
+            background: #ffffff;
         }
 
         .card-row {
@@ -211,40 +262,39 @@
             align-items: baseline;
             gap: 12px;
             flex-wrap: wrap;
-            margin-bottom: 10px;
-            font-size: 0.95rem;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
         }
 
         .card-icon {
-            font-size: 1.3rem;
-            min-width: 32px;
+            font-size: 1.2rem;
+            min-width: 30px;
         }
 
         .card-label {
             font-weight: 600;
-            color: #2c2e33;
-            min-width: 110px;
+            color: #2d3748;
+            min-width: 100px;
         }
 
         .card-value {
-            color: #1a1c1f;
-            word-break: break-word;
-            background: #f8f9fc;
-            padding: 4px 10px;
-            border-radius: 40px;
-            display: inline-block;
+            color: #1a202c;
+            background: #f7fafc;
+            padding: 3px 10px;
+            border-radius: 30px;
+            font-size: 0.85rem;
         }
 
         .placeholder {
             text-align: center;
-            color: #7c7f88;
-            padding: 40px 20px;
-            background: rgba(255,255,240,0.3);
-            border-radius: 28px;
-            font-size: 0.9rem;
+            color: #7f8c8d;
+            padding: 32px 16px;
+            background: #fafcff;
+            border-radius: 24px;
+            font-size: 0.85rem;
         }
 
-        /* Модальное окно Windows 11 */
+        /* модальное окно минималистичное */
         .modal {
             display: none;
             position: fixed;
@@ -252,29 +302,28 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(8px);
+            background-color: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
             align-items: center;
             justify-content: center;
             z-index: 1000;
         }
 
         .modal-content {
-            background: rgba(255, 255, 255, 0.97);
-            backdrop-filter: blur(30px);
-            border-radius: 28px;
+            background: #ffffff;
+            border-radius: 24px;
             width: 90%;
             max-width: 480px;
-            padding: 28px;
-            box-shadow: 0 25px 40px rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255,255,255,0.6);
+            padding: 24px;
+            box-shadow: 0 20px 32px rgba(0, 0, 0, 0.12);
+            border: 1px solid #eef2f8;
             animation: fadeSlide 0.2s ease;
         }
 
         @keyframes fadeSlide {
             from {
                 opacity: 0;
-                transform: translateY(12px);
+                transform: translateY(6px);
             }
             to {
                 opacity: 1;
@@ -283,18 +332,18 @@
         }
 
         .modal-content h3 {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             font-weight: 500;
-            margin-bottom: 20px;
+            margin-bottom: 18px;
         }
 
         .executor-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: #f1f3f7;
+            background: #f8fafc;
             margin-bottom: 10px;
-            padding: 10px 14px;
+            padding: 8px 14px;
             border-radius: 40px;
         }
 
@@ -304,9 +353,9 @@
 
         .executor-actions button {
             width: auto;
-            padding: 6px 12px;
+            padding: 4px 12px;
             margin-left: 8px;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             background: white;
         }
 
@@ -325,11 +374,10 @@
 
         .close {
             float: right;
-            font-size: 28px;
+            font-size: 26px;
             font-weight: 300;
             cursor: pointer;
             line-height: 1;
-            transition: 0.1s;
         }
 
         .close:hover {
@@ -344,30 +392,33 @@
                 grid-template-columns: 1fr;
                 gap: 20px;
             }
+            .date-small {
+                max-width: 100%;
+            }
         }
 
         ::-webkit-scrollbar {
-            width: 6px;
+            width: 5px;
         }
         ::-webkit-scrollbar-track {
-            background: #eef2f6;
-            border-radius: 8px;
+            background: #eef2f8;
+            border-radius: 10px;
         }
         ::-webkit-scrollbar-thumb {
-            background: #c0c8d0;
-            border-radius: 8px;
+            background: #cbd5e1;
+            border-radius: 10px;
         }
     </style>
 </head>
 <body>
 
 <div class="app-dashboard">
-    <!-- ЛЕВАЯ ПАНЕЛЬ: форма создания -->
+    <!-- ЛЕВАЯ ПАНЕЛЬ: уже -->
     <div class="card-pane">
         <h2>📋 Новая заявка</h2>
         <div class="form-group">
             <label>📅 Дата (ДД.ММ.ГГГГ ЧЧ-ММ)</label>
-            <input type="datetime-local" id="dateTimeField">
+            <input type="datetime-local" id="dateTimeField" class="date-small">
         </div>
         <div class="form-group">
             <label>👤 ФИО</label>
@@ -376,15 +427,15 @@
         <div class="form-group">
             <label>📡 Модальность</label>
             <div class="radio-group" id="modalityGroup">
-                <label><input type="radio" name="modality" value="РГ" checked> РГ</label>
-                <label><input type="radio" name="modality" value="ФЛГ"> ФЛГ</label>
-                <label><input type="radio" name="modality" value="КТ"> КТ</label>
-                <label><input type="radio" name="modality" value="МРТ"> МРТ</label>
+                <label><input type="radio" name="modality" value="РГ" checked> 📦 РГ</label>
+                <label><input type="radio" name="modality" value="ФЛГ"> 🫁 ФЛГ</label>
+                <label><input type="radio" name="modality" value="КТ"> 🖥️ КТ</label>
+                <label><input type="radio" name="modality" value="МРТ"> 🧠 МРТ</label>
             </div>
         </div>
         <div class="form-group">
-            <label>📝 Название исследования (автозамена: рг→Рентгенография и т.д.)</label>
-            <input type="text" id="studyNameField" placeholder="Введите: КТ органов грудной клетки, или просто 'кт'">
+            <label>📝 Название исследования (автозамена: кт → Компьютерная томография и т.д.)</label>
+            <input type="text" id="studyNameField" placeholder="Например: кт грудной клетки">
         </div>
         <div class="form-group">
             <label>👨‍💻 Исполнитель</label>
@@ -396,12 +447,16 @@
         <button id="exportBtn" class="export-btn">📎 Экспорт в JSON</button>
     </div>
 
-    <!-- ПРАВАЯ ПАНЕЛЬ: viewer JSON -->
+    <!-- ПРАВАЯ ПАНЕЛЬ: JSON Viewer расширенный -->
     <div class="card-pane">
         <h2>🔍 JSON Viewer</h2>
         <div class="import-area">
-            <input type="file" id="jsonImportFile" accept=".json">
-            <button id="importJsonBtn">📂 Импортировать</button>
+            <div class="file-button-wrapper">
+                <button class="custom-file-btn" id="customFileBtn">📁 Выбрать файл</button>
+                <input type="file" id="jsonImportFile" accept=".json">
+            </div>
+            <span id="fileNameDisplay" class="file-name">Файл не выбран</span>
+            <button id="importJsonBtn" class="import-action-btn">📂 Импортировать</button>
         </div>
         <div id="jsonViewerContainer" class="json-viewer">
             <div class="placeholder">✨ Импортируйте JSON-файл, чтобы увидеть карточки с данными</div>
@@ -409,7 +464,7 @@
     </div>
 </div>
 
-<!-- МОДАЛЬНОЕ ОКНО для редактирования исполнителей -->
+<!-- МОДАЛЬНОЕ ОКНО для исполнителей -->
 <div id="executorModal" class="modal">
     <div class="modal-content">
         <span class="close" id="closeModalBtn">&times;</span>
@@ -427,11 +482,11 @@
 </div>
 
 <script>
-    // ---------- ГЛОБАЛЬНЫЕ ДАННЫЕ ----------
-    let executorsList = [];          // массив строк (ФИО)
+    // ---------- ДАННЫЕ ----------
+    let executorsList = [];
     const STORAGE_KEY = 'paid_executors';
+    let selectedFile = null;   // для отображения имени
 
-    // словарь для автозамены сокращений (полные фразы)
     const abbreviationMap = {
         'рг': 'Рентгенография',
         'флг': 'Флюорография',
@@ -439,7 +494,6 @@
         'мрт': 'Магнитно-резонансная томография'
     };
 
-    // соответствие модальности -> префикс для имени файла
     const modalityPrefix = {
         'РГ': 'rg',
         'ФЛГ': 'flg',
@@ -447,7 +501,7 @@
         'МРТ': 'mrt'
     };
 
-    // ---------- ИНИЦИАЛИЗАЦИЯ (загрузка исполнителей, дата по умолчанию) ----------
+    // ---------- ИНИЦИАЛИЗАЦИЯ ----------
     function loadExecutors() {
         const stored = localStorage.getItem(STORAGE_KEY);
         if (stored) {
@@ -486,7 +540,6 @@
         }
     }
 
-    // Установка сегодняшней даты и времени в поле datetime-local (формат YYYY-MM-DDThh:mm)
     function setDefaultDateTime() {
         const now = new Date();
         const year = now.getFullYear();
@@ -499,11 +552,10 @@
         if (dateInput) dateInput.value = defaultValue;
     }
 
-    // Автозамена сокращений в поле "название исследования" (замена целых слов)
+    // Автозамена сокращений
     function autoReplaceAbbreviations(inputElement) {
         let value = inputElement.value;
         let changed = false;
-        // Регулярное выражение для границ слова, игнорируем регистр
         for (const [abbr, full] of Object.entries(abbreviationMap)) {
             const regex = new RegExp(`\\b${abbr}\\b`, 'gi');
             const newValue = value.replace(regex, full);
@@ -515,17 +567,15 @@
         if (changed) {
             const cursorPos = inputElement.selectionStart;
             inputElement.value = value;
-            // восстанавливаем курсор (примерно)
             if (cursorPos) inputElement.setSelectionRange(cursorPos, cursorPos);
         }
     }
 
-    // Функция экспорта: собираем JSON, генерируем имя файла
+    // ЭКСПОРТ
     function exportToJson() {
-        // получить данные формы
         const dateRaw = document.getElementById('dateTimeField').value;
         if (!dateRaw) {
-            alert('Пожалуйста, укажите дату и время');
+            alert('Укажите дату и время');
             return;
         }
         const fullName = document.getElementById('fullNameField').value.trim();
@@ -543,12 +593,10 @@
         }
         const studyNameRaw = document.getElementById('studyNameField').value.trim();
         const executor = document.getElementById('executorSelect').value;
-
         const studyName = studyNameRaw || 'Не указано';
 
-        // Создаём объект данных
         const exportData = {
-            dateTime: dateRaw,          // исходный формат datetime-local (YYYY-MM-DDThh:mm)
+            dateTime: dateRaw,
             fullName: fullName,
             modality: modality,
             studyName: studyName,
@@ -556,24 +604,18 @@
             exportTimestamp: new Date().toISOString()
         };
 
-        // Формируем имя файла: PAID_rg_23mar_23-13-18.json
-        // Префикс от модальности
         const prefix = modalityPrefix[modality] || 'rg';
-        // Парсим дату из dateRaw
         let dateObj = new Date(dateRaw);
-        if (isNaN(dateObj.getTime())) {
-            dateObj = new Date(); // fallback
-        }
-        const day = dateObj.getDate(); // без ведущего нуля
+        if (isNaN(dateObj.getTime())) dateObj = new Date();
+        const day = dateObj.getDate();
         const monthNames = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
         const monthAbbr = monthNames[dateObj.getMonth()];
         const hours = String(dateObj.getHours()).padStart(2, '0');
         const minutes = String(dateObj.getMinutes()).padStart(2, '0');
-        const seconds = String(new Date().getSeconds()).padStart(2, '0'); // секунды текущего момента для уникальности
+        const seconds = String(new Date().getSeconds()).padStart(2, '0');
         const dateTimeForFile = `${day}${monthAbbr}_${hours}-${minutes}-${seconds}`;
         const fileName = `PAID_${prefix}_${dateTimeForFile}.json`;
 
-        // Сериализация JSON
         const jsonStr = JSON.stringify(exportData, null, 2);
         const blob = new Blob([jsonStr], { type: 'application/json' });
         const link = document.createElement('a');
@@ -586,17 +628,14 @@
         URL.revokeObjectURL(url);
     }
 
-    // ---------- ИМПОРТ JSON И ОТОБРАЖЕНИЕ КАРТОЧЕК ----------
+    // ---------- ИМПОРТ И ОТОБРАЖЕНИЕ КАРТОЧЕК ----------
     function renderJsonCards(data) {
         const container = document.getElementById('jsonViewerContainer');
         container.innerHTML = '';
-        // поддержка массива или одиночного объекта
         let items = [];
-        if (Array.isArray(data)) {
-            items = data;
-        } else if (data && typeof data === 'object') {
-            items = [data];
-        } else {
+        if (Array.isArray(data)) items = data;
+        else if (data && typeof data === 'object') items = [data];
+        else {
             container.innerHTML = '<div class="placeholder">⚠️ Некорректный JSON: ожидается объект или массив</div>';
             return;
         }
@@ -606,32 +645,27 @@
             return;
         }
 
-        for (let idx = 0; idx < items.length; idx++) {
-            const record = items[idx];
+        for (let record of items) {
             const card = document.createElement('div');
             card.className = 'data-card';
 
-            // Вспомогательная функция для получения значения
-            const getVal = (key, defaultValue = '—') => (record[key] !== undefined && record[key] !== '') ? record[key] : defaultValue;
+            const getVal = (key, def = '—') => (record[key] !== undefined && record[key] !== '') ? record[key] : def;
 
-            // Форматирование даты из datetime-local в читаемый вид ДД.ММ.ГГГГ ЧЧ-ММ
             let displayDate = getVal('dateTime');
             if (displayDate !== '—' && displayDate.includes('T')) {
                 try {
                     const [datePart, timePart] = displayDate.split('T');
                     const [year, month, day] = datePart.split('-');
-                    const formattedDate = `${day}.${month}.${year} ${timePart}`;
-                    displayDate = formattedDate;
+                    displayDate = `${day}.${month}.${year} ${timePart}`;
                 } catch(e) {}
             }
 
-            // модальность с эмодзи
             let modalityVal = getVal('modality');
             let modalityEmoji = '';
-            if (modalityVal.includes('РГ')) modalityEmoji = '🩻';
-            else if (modalityVal.includes('ФЛГ')) modalityEmoji = '📸';
+            if (modalityVal.includes('РГ')) modalityEmoji = '📦';
+            else if (modalityVal.includes('ФЛГ')) modalityEmoji = '🫁';
             else if (modalityVal.includes('КТ')) modalityEmoji = '🖥️';
-            else if (modalityVal.includes('МРТ')) modalityEmoji = '🧲';
+            else if (modalityVal.includes('МРТ')) modalityEmoji = '🧠';
             else modalityEmoji = '📡';
 
             card.innerHTML = `
@@ -672,8 +706,6 @@
             if (m === '<') return '&lt;';
             if (m === '>') return '&gt;';
             return m;
-        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
-            return c;
         });
     }
 
@@ -689,20 +721,17 @@
                 document.getElementById('jsonViewerContainer').innerHTML = '<div class="placeholder">❌ Неверный формат JSON</div>';
             }
         };
-        reader.onerror = () => {
-            alert('Не удалось прочитать файл');
-        };
+        reader.onerror = () => alert('Не удалось прочитать файл');
         reader.readAsText(file, 'UTF-8');
     }
 
-    // ---------- МОДАЛЬНОЕ ОКНО РЕДАКТИРОВАНИЯ ИСПОЛНИТЕЛЕЙ ----------
+    // ---------- МОДАЛЬНОЕ ОКНО ----------
     let tempExecutors = [];
 
     function openExecutorModal() {
         tempExecutors = [...executorsList];
         renderModalExecutorList();
-        const modal = document.getElementById('executorModal');
-        modal.style.display = 'flex';
+        document.getElementById('executorModal').style.display = 'flex';
     }
 
     function renderModalExecutorList() {
@@ -727,7 +756,6 @@
                 `;
                 container.appendChild(div);
             });
-            // добавляем обработчики на кнопки
             document.querySelectorAll('.edit-exec-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const idx = parseInt(btn.getAttribute('data-index'));
@@ -749,13 +777,12 @@
     }
 
     function closeModal() {
-        const modal = document.getElementById('executorModal');
-        modal.style.display = 'none';
+        document.getElementById('executorModal').style.display = 'none';
     }
 
     function saveExecutorsFromModal() {
         if (tempExecutors.length === 0) {
-            if (confirm('Список исполнителей пуст. Это может повлиять на выбор. Продолжить?')) {
+            if (confirm('Список исполнителей пуст. Продолжить?')) {
                 executorsList = [];
                 saveExecutorsToLocal();
                 renderExecutorSelect();
@@ -769,39 +796,46 @@
         }
     }
 
-    // ---------- Обработчики событий и автозамена ----------
+    // ---------- ОБНОВЛЕНИЕ ИМЕНИ ФАЙЛА ----------
+    function updateFileNameDisplay(file) {
+        const span = document.getElementById('fileNameDisplay');
+        if (file) {
+            span.textContent = file.name.length > 28 ? file.name.substring(0, 25) + '...' : file.name;
+        } else {
+            span.textContent = 'Файл не выбран';
+        }
+    }
+
+    // ---------- СОБЫТИЯ ----------
     function setupEventListeners() {
-        // автозамена сокращений в поле названия исследования
         const studyInput = document.getElementById('studyNameField');
-        if (studyInput) {
-            studyInput.addEventListener('input', function() {
-                autoReplaceAbbreviations(studyInput);
-            });
-        }
+        if (studyInput) studyInput.addEventListener('input', () => autoReplaceAbbreviations(studyInput));
 
-        // экспорт
-        const exportBtn = document.getElementById('exportBtn');
-        if (exportBtn) exportBtn.addEventListener('click', exportToJson);
+        document.getElementById('exportBtn').addEventListener('click', exportToJson);
+        document.getElementById('editExecutorsBtn').addEventListener('click', openExecutorModal);
 
-        // импорт JSON
-        const importBtn = document.getElementById('importJsonBtn');
+        // стильный выбор файла
         const fileInput = document.getElementById('jsonImportFile');
-        if (importBtn && fileInput) {
-            importBtn.addEventListener('click', () => {
-                if (fileInput.files.length > 0) {
-                    importJsonFromFile(fileInput.files[0]);
-                } else {
-                    alert('Выберите JSON-файл');
-                }
-            });
-            fileInput.addEventListener('change', (e) => {
-                if (e.target.files.length) importJsonFromFile(e.target.files[0]);
-            });
-        }
+        const customBtn = document.getElementById('customFileBtn');
+        customBtn.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length) {
+                selectedFile = e.target.files[0];
+                updateFileNameDisplay(selectedFile);
+            } else {
+                selectedFile = null;
+                updateFileNameDisplay(null);
+            }
+        });
 
-        // редактирование исполнителей (модалка)
-        const editBtn = document.getElementById('editExecutorsBtn');
-        if (editBtn) editBtn.addEventListener('click', openExecutorModal);
+        const importBtn = document.getElementById('importJsonBtn');
+        importBtn.addEventListener('click', () => {
+            if (selectedFile) {
+                importJsonFromFile(selectedFile);
+            } else {
+                alert('Сначала выберите JSON-файл');
+            }
+        });
 
         const closeModalBtn = document.getElementById('closeModalBtn');
         const cancelModal = document.getElementById('cancelModalSaveBtn');
@@ -809,35 +843,32 @@
         const addModalBtn = document.getElementById('addExecutorModalBtn');
         const newExecutorInput = document.getElementById('newExecutorInput');
 
-        if (closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
-        if (cancelModal) cancelModal.addEventListener('click', closeModal);
-        if (saveModal) saveModal.addEventListener('click', saveExecutorsFromModal);
-        if (addModalBtn && newExecutorInput) {
-            addModalBtn.addEventListener('click', () => {
-                const name = newExecutorInput.value.trim();
-                if (name === '') {
-                    alert('Введите ФИО исполнителя');
-                    return;
-                }
-                tempExecutors.push(name);
-                newExecutorInput.value = '';
-                renderModalExecutorList();
-            });
-        }
+        closeModalBtn.addEventListener('click', closeModal);
+        cancelModal.addEventListener('click', closeModal);
+        saveModal.addEventListener('click', saveExecutorsFromModal);
+        addModalBtn.addEventListener('click', () => {
+            const name = newExecutorInput.value.trim();
+            if (name === '') {
+                alert('Введите ФИО исполнителя');
+                return;
+            }
+            tempExecutors.push(name);
+            newExecutorInput.value = '';
+            renderModalExecutorList();
+        });
 
-        // закрытие модалки по клику вне окна
         window.addEventListener('click', (e) => {
             const modal = document.getElementById('executorModal');
             if (e.target === modal) closeModal();
         });
     }
 
-    // инициализация приложения
     function init() {
         loadExecutors();
         setDefaultDateTime();
         setupEventListeners();
-        // добавим пример приветственного сообщения в viewer (можно пустой)
+        // очищаем display файла
+        updateFileNameDisplay(null);
     }
 
     init();
