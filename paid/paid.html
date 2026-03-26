@@ -42,7 +42,7 @@
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
         }
 
-        /* новый блок выбора файла в левой панели */
+        /* блок выбора файла */
         .file-select-area {
             margin-bottom: 1.5rem;
             display: flex;
@@ -51,9 +51,9 @@
             flex-wrap: wrap;
         }
         .file-select-btn {
-            background: #0078d4;
-            border: none;
-            border-radius: 28px;
+            background: #f0f2f5;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
             padding: 8px 20px;
             font-size: 0.85rem;
             font-weight: 500;
@@ -62,12 +62,12 @@
             align-items: center;
             gap: 8px;
             white-space: nowrap;
-            color: white;
+            color: #1e1f22;
             transition: 0.1s;
         }
         .file-select-btn:hover {
-            background: #106ebe;
-            transform: scale(0.98);
+            background: #e6e9ef;
+            border-color: #0078d4;
         }
         .selected-file-name {
             font-size: 0.8rem;
@@ -200,26 +200,20 @@
             transform: scale(0.97);
         }
 
-        button.primary-btn {
-            background: #0078d4;
-            border-color: #0078d4;
-            color: white;
-        }
-
-        button.primary-btn:hover {
-            background: #106ebe;
-        }
-
-        .add-to-json-btn {
+        /* Зеленая кнопка отправки */
+        .send-to-json-btn {
             margin-top: 20px;
             width: 100%;
-            background: #0078d4;
+            background: #10b981;
             color: white;
             border: none;
             padding: 10px;
             font-size: 0.95rem;
             font-weight: 600;
             border-radius: 12px;
+        }
+        .send-to-json-btn:hover {
+            background: #059669;
         }
 
         .abbrev-section {
@@ -298,7 +292,6 @@
             margin-bottom: 20px;
             align-items: flex-end;
         }
-        /* фильтр по дате уменьшен в 3 раза */
         .filter-date {
             flex: 0.33;
             min-width: 100px;
@@ -358,50 +351,39 @@
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
             padding-right: 4px;
         }
         
+        /* Компактные карточки в одну строку */
         .data-card {
             background: #ffffff;
-            border-radius: 14px;
-            padding: 12px 16px;
+            border-radius: 12px;
+            padding: 10px 16px;
             border: 1px solid #e9edf2;
             transition: all 0.2s;
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.85rem;
         }
         .data-card:hover {
             border-color: #cbdde9;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
         }
-        .card-row {
-            display: flex;
-            align-items: baseline;
-            gap: 10px;
-            margin-bottom: 8px;
-            font-size: 0.85rem;
-            flex-wrap: wrap;
-        }
-        .card-row:last-child {
-            margin-bottom: 0;
+        .card-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            white-space: nowrap;
         }
         .card-icon {
-            font-size: 1rem;
-            min-width: 28px;
-            color: #4a5568;
+            font-size: 0.95rem;
         }
-        .card-label {
-            font-weight: 600;
-            color: #2d3748;
-            min-width: 85px;
-            font-size: 0.8rem;
-        }
-        .card-value {
+        .card-text {
             color: #1a202c;
-            background: #f7fafc;
-            padding: 2px 8px;
-            border-radius: 20px;
-            font-size: 0.8rem;
             font-weight: 500;
         }
         .placeholder {
@@ -448,6 +430,8 @@
             body { padding: 1rem; }
             .app-dashboard { grid-template-columns: 1fr; gap: 20px; }
             .filter-date { flex: 1; }
+            .data-card { flex-direction: column; align-items: flex-start; white-space: normal; }
+            .card-item { white-space: normal; }
         }
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: #eef2f8; border-radius: 10px; }
@@ -458,7 +442,6 @@
 
 <div class="app-dashboard">
     <div class="card-pane">
-        <!-- Новый блок выбора файла вместо заголовка и кнопки загрузить JSON -->
         <div class="file-select-area">
             <button class="file-select-btn" id="selectFileBtnLeft">📁 Выбрать файл</button>
             <span id="selectedFileNameLeft" class="selected-file-name">Файл не выбран</span>
@@ -502,7 +485,7 @@
             <div id="executorRadiosContainer" class="executor-radios"></div>
         </div>
 
-        <button id="addToJsonBtn" class="add-to-json-btn">➕ Добавить в JSON</button>
+        <button id="sendToJsonBtn" class="send-to-json-btn">📨 Отправить в JSON</button>
 
         <div class="abbrev-section">
             <div class="abbrev-title">
@@ -519,11 +502,8 @@
     </div>
 
     <div class="card-pane">
-        <!-- Заголовок JSON Viewer удален -->
-        
         <div class="viewer-header">
             <div class="filter-section">
-                <!-- Поле поиска первым -->
                 <div class="filter-search">
                     <label>🔍 Поиск</label>
                     <div class="filter-wrapper">
@@ -531,7 +511,6 @@
                         <button class="clear-filter" id="clearSearchBtn" title="Очистить">✖</button>
                     </div>
                 </div>
-                <!-- Поле фильтра по дате уменьшено в 3 раза -->
                 <div class="filter-date">
                     <label>📅 Фильтр по дате</label>
                     <div class="filter-wrapper">
@@ -692,7 +671,6 @@
         });
     }
 
-    // ПОЛНОСТЬЮ ИСПРАВЛЕННАЯ АВТОЗАМЕНА
     function autoReplaceAbbreviations(inputElement) {
         let value = inputElement.value;
         let changed = false;
@@ -759,6 +737,18 @@
         return { dateRaw, fullName, modality, studyName, executor };
     }
 
+    function formatDateTimeForFile(dateTimeStr) {
+        let dateObj = new Date(dateTimeStr);
+        if (isNaN(dateObj.getTime())) dateObj = new Date();
+        const day = dateObj.getDate();
+        const months = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+        const monthAbbr = months[dateObj.getMonth()];
+        const hours = String(dateObj.getHours()).padStart(2, '0');
+        const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+        const seconds = String(new Date().getSeconds()).padStart(2, '0');
+        return `${day}${monthAbbr}_${hours}-${minutes}-${seconds}`;
+    }
+
     function formatDateTimeForDisplay(dateTimeStr) {
         if (!dateTimeStr) return '—';
         if (dateTimeStr.includes('T')) {
@@ -772,18 +762,11 @@
     function generateFileName(modality, dateTimeStr) {
         const prefixMap = { 'РГ':'rg', 'ФЛГ':'flg', 'КТ':'ct', 'МРТ':'mrt' };
         const prefix = prefixMap[modality] || 'rg';
-        let dateObj = new Date(dateTimeStr);
-        if (isNaN(dateObj.getTime())) dateObj = new Date();
-        const day = dateObj.getDate();
-        const months = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
-        const monthAbbr = months[dateObj.getMonth()];
-        const hours = String(dateObj.getHours()).padStart(2,'0');
-        const minutes = String(dateObj.getMinutes()).padStart(2,'0');
-        const seconds = String(new Date().getSeconds()).padStart(2,'0');
-        return `PAID_${prefix}_${day}${monthAbbr}_${hours}-${minutes}-${seconds}.json`;
+        const dateTimeForFile = formatDateTimeForFile(dateTimeStr);
+        return `PAID_${dateTimeForFile}.json`;
     }
 
-    function addToJson() {
+    function sendToJson() {
         try {
             const formData = getFormData();
             const newRecord = {
@@ -807,6 +790,13 @@
                 updatedData = [newRecord];
             }
 
+            // Обновляем currentLoadedJson новыми данными
+            currentLoadedJson = updatedData;
+            
+            // Обновляем отображение в viewer
+            filterAndRender();
+            
+            // Сохраняем файл
             const fileName = generateFileName(formData.modality, formData.dateRaw);
             const jsonStr = JSON.stringify(updatedData, null, 2);
             const blob = new Blob([jsonStr], { type: 'application/json' });
@@ -897,31 +887,11 @@
             const modality = record.modality || '—';
             
             card.innerHTML = `
-                <div class="card-row">
-                    <span class="card-icon">📅</span>
-                    <span class="card-label">Дата:</span>
-                    <span class="card-value">${escapeHtml(displayDate)}</span>
-                </div>
-                <div class="card-row">
-                    <span class="card-icon">👤</span>
-                    <span class="card-label">ФИО:</span>
-                    <span class="card-value">${escapeHtml(fullName)}</span>
-                </div>
-                <div class="card-row">
-                    <span class="card-icon">${modalityEmoji}</span>
-                    <span class="card-label">Модальность:</span>
-                    <span class="card-value">${escapeHtml(modality)}</span>
-                </div>
-                <div class="card-row">
-                    <span class="card-icon">📝</span>
-                    <span class="card-label">Исследование:</span>
-                    <span class="card-value">${escapeHtml(studyName)}</span>
-                </div>
-                <div class="card-row">
-                    <span class="card-icon">👨‍💻</span>
-                    <span class="card-label">Исполнитель:</span>
-                    <span class="card-value">${escapeHtml(executor)}</span>
-                </div>
+                <div class="card-item"><span class="card-icon">📅</span><span class="card-text">${escapeHtml(displayDate)}</span></div>
+                <div class="card-item"><span class="card-icon">👤</span><span class="card-text">${escapeHtml(fullName)}</span></div>
+                <div class="card-item"><span class="card-icon">${modalityEmoji}</span><span class="card-text">${escapeHtml(modality)}</span></div>
+                <div class="card-item"><span class="card-icon">📝</span><span class="card-text">${escapeHtml(studyName)}</span></div>
+                <div class="card-item"><span class="card-icon">👨‍💻</span><span class="card-text">${escapeHtml(executor)}</span></div>
             `;
             container.appendChild(card);
         }
@@ -1015,7 +985,7 @@
             studyInput.addEventListener('blur', () => autoReplaceAbbreviations(studyInput));
         }
 
-        document.getElementById('addToJsonBtn').addEventListener('click', addToJson);
+        document.getElementById('sendToJsonBtn').addEventListener('click', sendToJson);
         document.getElementById('editExecutorsBtn').addEventListener('click', openExecutorModal);
         document.getElementById('closeModalBtn').addEventListener('click', closeModal);
         document.getElementById('cancelModalSaveBtn').addEventListener('click', closeModal);
@@ -1026,22 +996,17 @@
             else alert('Введите ФИО');
         });
 
-        // Обработка выбора файла - единый input для обеих панелей
-        const fileInput = document.getElementById('jsonImportFile');
-        if (!fileInput) {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.id = 'jsonImportFile';
-            input.accept = '.json';
-            input.style.display = 'none';
-            document.body.appendChild(input);
-        }
-        const actualFileInput = document.getElementById('jsonImportFile');
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.id = 'jsonImportFileGlobal';
+        fileInput.accept = '.json';
+        fileInput.style.display = 'none';
+        document.body.appendChild(fileInput);
         
         const selectFileBtn = document.getElementById('selectFileBtnLeft');
-        selectFileBtn.addEventListener('click', () => actualFileInput.click());
+        selectFileBtn.addEventListener('click', () => fileInput.click());
         
-        actualFileInput.addEventListener('change', (e) => {
+        fileInput.addEventListener('change', (e) => {
             if (e.target.files.length) {
                 loadAndDisplayJson(e.target.files[0]);
             } else {
