@@ -42,22 +42,15 @@
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
         }
 
-        .title-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+        /* новый блок выбора файла в левой панели */
+        .file-select-area {
             margin-bottom: 1.5rem;
+            display: flex;
             gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
         }
-        .title-row h2 {
-            font-size: 1.2rem;
-            font-weight: 500;
-            margin: 0;
-            border-left: 3px solid #0078d4;
-            padding-left: 12px;
-            letter-spacing: -0.2px;
-        }
-        .load-json-btn {
+        .file-select-btn {
             background: #0078d4;
             border: none;
             border-radius: 28px;
@@ -72,9 +65,21 @@
             color: white;
             transition: 0.1s;
         }
-        .load-json-btn:hover {
+        .file-select-btn:hover {
             background: #106ebe;
             transform: scale(0.98);
+        }
+        .selected-file-name {
+            font-size: 0.8rem;
+            color: #4a5568;
+            background: #f8f9fc;
+            padding: 5px 12px;
+            border-radius: 40px;
+            border: 1px solid #e2e8f0;
+            max-width: 250px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .form-group {
@@ -293,7 +298,13 @@
             margin-bottom: 20px;
             align-items: flex-end;
         }
-        .filter-group {
+        /* фильтр по дате уменьшен в 3 раза */
+        .filter-date {
+            flex: 0.33;
+            min-width: 100px;
+            position: relative;
+        }
+        .filter-search {
             flex: 1;
             min-width: 200px;
             position: relative;
@@ -339,42 +350,6 @@
         .clear-filter:hover {
             color: #475569;
             background: #f1f5f9;
-        }
-
-        .import-area {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 24px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-        .file-button-wrapper {
-            position: relative;
-            display: inline-flex;
-        }
-        .custom-file-btn {
-            background: #f0f2f5;
-            border: 1px solid #cbd5e1;
-            border-radius: 10px;
-            padding: 8px 16px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            cursor: pointer;
-        }
-        #jsonImportFile {
-            display: none;
-        }
-        .file-name {
-            font-size: 0.8rem;
-            color: #4a5568;
-            background: #f8f9fc;
-            padding: 5px 12px;
-            border-radius: 40px;
-            border: 1px solid #e2e8f0;
-            max-width: 220px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
         }
 
         .json-viewer {
@@ -438,18 +413,6 @@
             font-size: 0.9rem;
         }
 
-        /* уменьшенный заголовок */
-        .viewer-title {
-            font-size: 1.1rem;
-            font-weight: 500;
-            margin-bottom: 16px;
-            color: #1e1f22;
-            letter-spacing: -0.2px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
         .modal {
             display: none;
             position: fixed;
@@ -484,6 +447,7 @@
         @media (max-width: 780px) {
             body { padding: 1rem; }
             .app-dashboard { grid-template-columns: 1fr; gap: 20px; }
+            .filter-date { flex: 1; }
         }
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: #eef2f8; border-radius: 10px; }
@@ -494,9 +458,10 @@
 
 <div class="app-dashboard">
     <div class="card-pane">
-        <div class="title-row">
-            <h2>Новая заявка</h2>
-            <button class="load-json-btn" id="loadJsonBtnLeft">📂 Загрузить JSON</button>
+        <!-- Новый блок выбора файла вместо заголовка и кнопки загрузить JSON -->
+        <div class="file-select-area">
+            <button class="file-select-btn" id="selectFileBtnLeft">📁 Выбрать файл</button>
+            <span id="selectedFileNameLeft" class="selected-file-name">Файл не выбран</span>
         </div>
 
         <div class="form-group">
@@ -554,30 +519,24 @@
     </div>
 
     <div class="card-pane">
-        <div class="viewer-title">🔍 JSON Viewer</div>
+        <!-- Заголовок JSON Viewer удален -->
         
-        <div class="import-area">
-            <div class="file-button-wrapper">
-                <button class="custom-file-btn" id="customFileBtnRight">📁 Выбрать файл</button>
-                <input type="file" id="jsonImportFile" accept=".json">
-            </div>
-            <span id="fileNameDisplay" class="file-name">Файл не выбран</span>
-        </div>
-
         <div class="viewer-header">
             <div class="filter-section">
-                <div class="filter-group">
-                    <label>📅 Фильтр по дате</label>
-                    <div class="filter-wrapper">
-                        <input type="date" id="dateFilterInput">
-                        <button class="clear-filter" id="clearDateFilter" title="Очистить">✖</button>
-                    </div>
-                </div>
-                <div class="filter-group">
+                <!-- Поле поиска первым -->
+                <div class="filter-search">
                     <label>🔍 Поиск</label>
                     <div class="filter-wrapper">
                         <input type="text" id="searchInput" placeholder="Поиск по ФИО, исследованию, исполнителю...">
                         <button class="clear-filter" id="clearSearchBtn" title="Очистить">✖</button>
+                    </div>
+                </div>
+                <!-- Поле фильтра по дате уменьшено в 3 раза -->
+                <div class="filter-date">
+                    <label>📅 Фильтр по дате</label>
+                    <div class="filter-wrapper">
+                        <input type="date" id="dateFilterInput">
+                        <button class="clear-filter" id="clearDateFilter" title="Очистить">✖</button>
                     </div>
                 </div>
             </div>
@@ -743,13 +702,11 @@
             const full = rule.full;
             if (!abbr || !full) continue;
             
-            // Ищем сокращение как отдельное слово
             const regex = new RegExp(`\\b${escapeRegex(abbr)}\\b`, 'gi');
             let match;
             while ((match = regex.exec(value)) !== null) {
                 changed = true;
                 value = value.substring(0, match.index) + full + value.substring(match.index + match[0].length);
-                // Обновляем regex для продолжения поиска
                 regex.lastIndex = match.index + full.length;
             }
         }
@@ -757,7 +714,6 @@
         if (changed) {
             const cursorPos = inputElement.selectionStart;
             inputElement.value = value;
-            // Восстанавливаем позицию курсора
             if (cursorPos) {
                 const newPos = Math.min(cursorPos + (value.length - inputElement.value.length), value.length);
                 inputElement.setSelectionRange(newPos, newPos);
@@ -769,7 +725,6 @@
         return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
 
-    // Обработчик ввода для автозамены
     let replaceTimeout;
     function handleStudyInput(e) {
         clearTimeout(replaceTimeout);
@@ -1003,9 +958,9 @@
     }
 
     function updateFileNameDisplay(file) {
-        const span = document.getElementById('fileNameDisplay');
-        if (file) span.textContent = file.name.length > 30 ? file.name.substring(0, 27) + '...' : file.name;
-        else span.textContent = 'Файл не выбран';
+        const leftSpan = document.getElementById('selectedFileNameLeft');
+        if (file) leftSpan.textContent = file.name.length > 35 ? file.name.substring(0, 32) + '...' : file.name;
+        else leftSpan.textContent = 'Файл не выбран';
     }
 
     let tempExecutors = [];
@@ -1071,14 +1026,30 @@
             else alert('Введите ФИО');
         });
 
+        // Обработка выбора файла - единый input для обеих панелей
         const fileInput = document.getElementById('jsonImportFile');
-        const customBtnRight = document.getElementById('customFileBtnRight');
-        const loadJsonLeft = document.getElementById('loadJsonBtnLeft');
-        customBtnRight.addEventListener('click', () => fileInput.click());
-        loadJsonLeft.addEventListener('click', () => fileInput.click());
-        fileInput.addEventListener('change', (e) => {
-            if (e.target.files.length) loadAndDisplayJson(e.target.files[0]);
-            else { selectedFile = null; currentLoadedJson = null; updateFileNameDisplay(null); document.getElementById('jsonViewerContainer').innerHTML = '<div class="placeholder">✨ Выберите JSON-файл</div>'; }
+        if (!fileInput) {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.id = 'jsonImportFile';
+            input.accept = '.json';
+            input.style.display = 'none';
+            document.body.appendChild(input);
+        }
+        const actualFileInput = document.getElementById('jsonImportFile');
+        
+        const selectFileBtn = document.getElementById('selectFileBtnLeft');
+        selectFileBtn.addEventListener('click', () => actualFileInput.click());
+        
+        actualFileInput.addEventListener('change', (e) => {
+            if (e.target.files.length) {
+                loadAndDisplayJson(e.target.files[0]);
+            } else {
+                selectedFile = null;
+                currentLoadedJson = null;
+                updateFileNameDisplay(null);
+                document.getElementById('jsonViewerContainer').innerHTML = '<div class="placeholder">✨ Выберите JSON-файл, чтобы увидеть карточки</div>';
+            }
         });
 
         const dateFilter = document.getElementById('dateFilterInput');
