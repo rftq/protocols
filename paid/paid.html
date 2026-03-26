@@ -377,7 +377,6 @@
             white-space: nowrap;
         }
 
-        /* Компактный JSON viewer - столбик */
         .json-viewer {
             max-height: 70vh;
             min-height: 500px;
@@ -388,7 +387,6 @@
             padding-right: 4px;
         }
         
-        /* Компактные карточки в столбик */
         .data-card {
             background: #ffffff;
             border-radius: 14px;
@@ -438,6 +436,18 @@
             background: #fafcff;
             border-radius: 24px;
             font-size: 0.9rem;
+        }
+
+        /* уменьшенный заголовок */
+        .viewer-title {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 16px;
+            color: #1e1f22;
+            letter-spacing: -0.2px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .modal {
@@ -544,7 +554,7 @@
     </div>
 
     <div class="card-pane">
-        <h2 style="margin-bottom: 16px;">🔍 JSON Viewer</h2>
+        <div class="viewer-title">🔍 JSON Viewer</div>
         
         <div class="import-area">
             <div class="file-button-wrapper">
@@ -723,7 +733,7 @@
         });
     }
 
-    // ИСПРАВЛЕННАЯ АВТОЗАМЕНА
+    // ПОЛНОСТЬЮ ИСПРАВЛЕННАЯ АВТОЗАМЕНА
     function autoReplaceAbbreviations(inputElement) {
         let value = inputElement.value;
         let changed = false;
@@ -733,21 +743,23 @@
             const full = rule.full;
             if (!abbr || !full) continue;
             
+            // Ищем сокращение как отдельное слово
             const regex = new RegExp(`\\b${escapeRegex(abbr)}\\b`, 'gi');
-            if (regex.test(value)) {
-                const newValue = value.replace(regex, full);
-                if (newValue !== value) {
-                    value = newValue;
-                    changed = true;
-                }
+            let match;
+            while ((match = regex.exec(value)) !== null) {
+                changed = true;
+                value = value.substring(0, match.index) + full + value.substring(match.index + match[0].length);
+                // Обновляем regex для продолжения поиска
+                regex.lastIndex = match.index + full.length;
             }
         }
         
         if (changed) {
             const cursorPos = inputElement.selectionStart;
             inputElement.value = value;
+            // Восстанавливаем позицию курсора
             if (cursorPos) {
-                const newPos = Math.min(cursorPos, value.length);
+                const newPos = Math.min(cursorPos + (value.length - inputElement.value.length), value.length);
                 inputElement.setSelectionRange(newPos, newPos);
             }
         }
@@ -757,8 +769,13 @@
         return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
 
+    // Обработчик ввода для автозамены
+    let replaceTimeout;
     function handleStudyInput(e) {
-        autoReplaceAbbreviations(e.target);
+        clearTimeout(replaceTimeout);
+        replaceTimeout = setTimeout(() => {
+            autoReplaceAbbreviations(e.target);
+        }, 10);
     }
 
     function setDefaultDateTime() {
