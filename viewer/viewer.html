@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Медицинские заключения :: просмотр JSON</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+        }
+
+        body {
+            background: #f5f7fb;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 20px 40px -10px rgba(0, 20, 30, 0.2);
+            padding: 2rem 2rem 2.5rem;
+        }
+
+        h1 {
+            font-weight: 500;
+            font-size: 2rem;
+            margin-top: 0;
+            margin-bottom: 0.25rem;
+            color: #0b2b3c;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h1 small {
+            font-size: 0.9rem;
+            background: #e8edf5;
+            color: #2b4f6e;
+            padding: 0.2rem 1rem;
+            border-radius: 30px;
+            font-weight: 400;
+        }
+
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 1.8rem 0 1.2rem;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            background: #eef2f7;
+            border-radius: 40px;
+            padding: 0.4rem 1.2rem;
+            border: 1px dashed #8ba0b8;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .file-input-wrapper:hover {
+            background: #e2e9f2;
+            border-color: #2e6a9e;
+        }
+
+        .file-input-wrapper input {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .file-input-wrapper span {
+            font-weight: 500;
+            color: #1f4973;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stats {
+            background: #dee7f2;
+            border-radius: 30px;
+            padding: 0.4rem 1.3rem;
+            font-size: 0.95rem;
+            color: #103a5c;
+            font-weight: 500;
+        }
+
+        .conclusions-list {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            margin-top: 30px;
+        }
+
+        .conclusion-card {
+            background: #ffffff;
+            border: 1px solid #dde5ef;
+            border-radius: 24px;
+            padding: 1.3rem 1.8rem;
+            box-shadow: 0 4px 12px rgba(0,20,40,0.03);
+            transition: 0.15s ease;
+            cursor: pointer;
+            border-left: 6px solid #9bb7d4;
+        }
+
+        .conclusion-card:hover {
+            border-color: #7a9bc2;
+            box-shadow: 0 8px 20px rgba(20, 60, 100, 0.12);
+            background: #fafdff;
+            border-left-width: 8px;
+        }
+
+        .patient-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0a3147;
+            margin-bottom: 0.4rem;
+            letter-spacing: -0.2px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .patient-name::before {
+            content: "👤";
+            font-size: 1.4rem;
+            opacity: 0.8;
+        }
+
+        .conclusion-text {
+            font-size: 1.05rem;
+            line-height: 1.5;
+            color: #244c6b;
+            background: #f0f5fc;
+            padding: 0.8rem 1.2rem;
+            border-radius: 18px;
+            margin: 0.6rem 0 0.2rem;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        /* модальное окно */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(10, 30, 45, 0.5);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.25s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-card {
+            background: white;
+            width: 90%;
+            max-width: 650px;
+            border-radius: 36px;
+            box-shadow: 0 40px 70px rgba(0, 10, 30, 0.4);
+            padding: 2rem 2.2rem;
+            transform: scale(0.95);
+            transition: 0.25s cubic-bezier(0.2, 0.9, 0.3, 1.1);
+        }
+
+        .active .modal-card {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #e9f0f6;
+            padding-bottom: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 500;
+            color: #003153;
+            line-height: 1.2;
+            word-break: break-word;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #6b8da8;
+            transition: 0.2s;
+            line-height: 1;
+            padding: 0 10px;
+        }
+
+        .modal-close:hover {
+            color: #1f3a57;
+            transform: scale(1.2);
+        }
+
+        .modal-body {
+            font-size: 1.2rem;
+            background: #f4faff;
+            padding: 1.5rem 1.8rem;
+            border-radius: 28px;
+            color: #0a334f;
+            line-height: 1.6;
+            max-height: 55vh;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+            border: 1px solid #dae6f2;
+        }
+
+        .modal-footer {
+            margin-top: 1.5rem;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .btn-flat {
+            background: #e3ebf5;
+            border: none;
+            padding: 0.6rem 1.8rem;
+            border-radius: 40px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1c4c7e;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+
+        .btn-flat:hover {
+            background: #cddef5;
+        }
+
+        .placeholder-message {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: #f1f7fd;
+            border-radius: 48px;
+            color: #577a9e;
+            font-size: 1.2rem;
+            border: 2px dashed #b8d0e5;
+            margin-top: 20px;
+        }
+
+        .file-name {
+            font-size: 0.95rem;
+            color: #2f5f8a;
+            background: #e3ecf5;
+            padding: 0.2rem 1rem;
+            border-radius: 30px;
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .error-badge {
+            background: #ffeded;
+            color: #b0003a;
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            border: 1px solid #ffb3b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>
+            🫀 Заключения
+            <small>JSON пациенты</small>
+        </h1>
+
+        <!-- Панель загрузки -->
+        <div class="toolbar">
+            <div class="file-input-wrapper">
+                <input type="file" id="jsonUpload" accept=".json,application/json" />
+                <span>📂 Выбрать JSON-файл</span>
+            </div>
+            <div id="fileInfo" class="stats">Файл не выбран</div>
+        </div>
+
+        <!-- Контейнер для списка заключений -->
+        <div id="conclusionsContainer" class="conclusions-list">
+            <div class="placeholder-message">
+                ⬆ Загрузите JSON-файл с заключениями<br/>
+                <span style="font-size:0.9rem; opacity:0.7; display:block; margin-top:10px;">
+                    Формат: массив объектов { "patient": "ФИО", "conclusion": "текст" } или подобный
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно (детальный просмотр) -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2 id="modalPatientName">...</h2>
+                <button class="modal-close" id="modalCloseBtn" aria-label="Закрыть">&times;</button>
+            </div>
+            <div class="modal-body" id="modalConclusionText">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button class="btn-flat" id="modalOkBtn">Закрыть</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // Элементы DOM
+            const fileInput = document.getElementById('jsonUpload');
+            const fileInfo = document.getElementById('fileInfo');
+            const container = document.getElementById('conclusionsContainer');
+            const modalOverlay = document.getElementById('modalOverlay');
+            const modalPatient = document.getElementById('modalPatientName');
+            const modalText = document.getElementById('modalConclusionText');
+            const modalCloseBtn = document.getElementById('modalCloseBtn');
+            const modalOkBtn = document.getElementById('modalOkBtn');
+
+            // Текущие данные (массив заключений)
+            let currentConclusions = [];
+
+            // --- Функция отрисовки списка карточек ---
+            function renderConclusions(conclusions) {
+                if (!conclusions || conclusions.length === 0) {
+                    container.innerHTML = `<div class="placeholder-message">📭 Нет заключений для отображения</div>`;
+                    return;
+                }
+
+                // строим HTML вручную для полного контроля (можно и через createElement, но так короче)
+                let htmlString = '';
+                conclusions.forEach((item, index) => {
+                    // безопасное извлечение полей — на случай разных вариантов JSON
+                    const patientName = item.patient || item.patient_name || item.name || item.fio || item.ФИО || 'Без имени';
+                    const conclusionText = item.conclusion || item.text || item.заключение || item.description || 'Нет текста заключения';
+
+                    // Оборачиваем каждую карточку, data-index для модалки
+                    htmlString += `
+                        <div class="conclusion-card" data-index="${index}" role="button" tabindex="0" aria-label="Открыть заключение пациента ${patientName}">
+                            <div class="patient-name">${escapeHtml(patientName)}</div>
+                            <div class="conclusion-text">${escapeHtml(conclusionText)}</div>
+                        </div>
+                    `;
+                });
+
+                container.innerHTML = htmlString;
+
+                // Добавляем обработчик клика на каждую карточку (через делегирование)
+                // но легче навесить один обработчик на контейнер
+                // уже есть container, используем его
+            }
+
+            // Простейшее экранирование HTML (чтобы избежать XSS, если в JSON вдруг теги)
+            function escapeHtml(unsafe) {
+                if (!unsafe) return '';
+                return unsafe
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#039;");
+            }
+
+            // --- Обработчик клика по карточке (открыть модалку) ---
+            function handleCardClick(e) {
+                // ищем ближайшую карточку (клик мог быть на имени или тексте)
+                const card = e.target.closest('.conclusion-card');
+                if (!card) return;
+
+                const index = card.getAttribute('data-index');
+                if (index === null || !currentConclusions[index]) return;
+
+                const conclusion = currentConclusions[index];
+                // Извлекаем поля по тем же ключам
+                const patientName = conclusion.patient || conclusion.patient_name || conclusion.name || conclusion.fio || conclusion.ФИО || 'Без имени';
+                const conclusionText = conclusion.conclusion || conclusion.text || conclusion.заключение || conclusion.description || 'Нет текста заключения';
+
+                modalPatient.textContent = patientName;   // не экранируем, т.к. попадёт в текстовый node (через textContent)
+                modalText.textContent = conclusionText;   // используем textContent для защиты
+                modalOverlay.classList.add('active');
+            }
+
+            // --- Закрытие модалки ---
+            function closeModal() {
+                modalOverlay.classList.remove('active');
+            }
+
+            // --- Парсинг загруженного файла ---
+            function processFile(file) {
+                if (!file) {
+                    fileInfo.textContent = 'Файл не выбран';
+                    currentConclusions = [];
+                    renderConclusions([]);
+                    return;
+                }
+
+                fileInfo.textContent = `📄 ${file.name}`;
+
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    try {
+                        const jsonData = JSON.parse(ev.target.result);
+                        console.log('Загружен JSON:', jsonData);
+
+                        // Преобразуем в массив, если объект с вложенным ключом, типа { "data": [...] } или { "conclusions": [...] }
+                        let conclusionsArray = jsonData;
+                        if (!Array.isArray(jsonData)) {
+                            // пытаемся найти первый ключ, значение которого — массив
+                            const possibleKeys = ['conclusions', 'data', 'items', 'records', 'patients', 'заключения', 'list'];
+                            for (let key of possibleKeys) {
+                                if (Array.isArray(jsonData[key])) {
+                                    conclusionsArray = jsonData[key];
+                                    break;
+                                }
+                            }
+                            // если так и не нашли массив, но сам объект не массив — используем как один элемент?
+                            if (!Array.isArray(conclusionsArray)) {
+                                // возможно, это одиночное заключение — обернём в массив
+                                if (jsonData.patient || jsonData.conclusion || jsonData.ФИО) {
+                                    conclusionsArray = [jsonData];
+                                } else {
+                                    throw new Error('Не удалось найти массив заключений в JSON');
+                                }
+                            }
+                        }
+
+                        // Фильтруем: убедимся, что элементы — объекты (отсекаем примитивы)
+                        conclusionsArray = conclusionsArray.filter(item => item && typeof item === 'object');
+
+                        if (conclusionsArray.length === 0) {
+                            throw new Error('Массив пуст или не содержит объектов');
+                        }
+
+                        currentConclusions = conclusionsArray;
+                        renderConclusions(currentConclusions);
+                    } catch (error) {
+                        console.error('Ошибка парсинга JSON:', error);
+                        fileInfo.textContent = '❌ Ошибка в JSON';
+                        container.innerHTML = `<div class="placeholder-message error-badge">❌ Не удалось обработать файл: ${escapeHtml(error.message)}</div>`;
+                        currentConclusions = [];
+                    }
+                };
+
+                reader.onerror = () => {
+                    fileInfo.textContent = '❌ Ошибка чтения';
+                    container.innerHTML = `<div class="placeholder-message error-badge">Ошибка при чтении файла</div>`;
+                };
+
+                reader.readAsText(file);
+            }
+
+            // --- Событие выбора файла ---
+            fileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                processFile(file);
+                // сбрасываем input, чтобы повторный выбор того же файла сработал
+                fileInput.value = '';
+            });
+
+            // --- Делегирование кликов по карточкам внутри контейнера ---
+            container.addEventListener('click', handleCardClick);
+
+            // --- Закрытие модалки (кнопки и клик по оверлею) ---
+            modalCloseBtn.addEventListener('click', closeModal);
+            modalOkBtn.addEventListener('click', closeModal);
+            modalOverlay.addEventListener('click', (e) => {
+                if (e.target === modalOverlay) closeModal();
+            });
+
+            // клавиша Escape
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && modalOverlay.classList.contains('active')) {
+                    closeModal();
+                }
+            });
+
+            // Пример предзагрузки демо-данных (можно убрать или оставить)
+            const demoJson = [
+                { "patient": "Иванов Пётр Сергеевич", "conclusion": "Заключение: Остеохондроз поясничного отдела. Рекомендовано ЛФК, плавание, наблюдение невролога." },
+                { "patient": "Петрова Анна Викторовна", "conclusion": "Диагноз: Хронический гастродуоденит, ремиссия. Рекомендовано соблюдение диеты №5, при болях — спазмолитики." },
+                { "patient": "Сидоров Алексей Иванович", "conclusion": "ЭКГ: синусовая тахикардия. Дополнительно: холтер, консультация кардиолога." },
+                { "patient": "Козлова Елена Михайловна", "conclusion": "МРТ коленного сустава: признаки гонартроза 1 ст. Рекомендации: хондропротекторы, уменьшить нагрузку." }
+            ];
+
+            // Загружаем демо-данные для наглядности (как будто файл загружен)
+            setTimeout(() => {
+                currentConclusions = demoJson;
+                renderConclusions(demoJson);
+                fileInfo.textContent = '📄 демо-данные (пример)';
+            }, 100);
+        })();
+    </script>
+</body>
+</html>
