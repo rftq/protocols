@@ -42,7 +42,6 @@
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
         }
 
-        /* блок выбора файла */
         .file-select-area {
             margin-bottom: 1.5rem;
             display: flex;
@@ -115,7 +114,11 @@
         }
         .date-field {
             width: auto;
-            min-width: 200px;
+            min-width: 150px;
+        }
+        /* Убираем время из поля даты */
+        input[type="date"] {
+            font-family: inherit;
         }
 
         .radio-group {
@@ -180,6 +183,18 @@
             align-items: center;
             gap: 6px;
         }
+        /* убираем подчеркивание у кнопки редактирования */
+        .edit-link {
+            background: none;
+            border: none;
+            color: #0078d4;
+            padding: 0;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+        .edit-link:hover {
+            text-decoration: underline;
+        }
 
         button {
             background: #ffffff;
@@ -200,7 +215,6 @@
             transform: scale(0.97);
         }
 
-        /* Зеленая кнопка отправки */
         .send-to-json-btn {
             margin-top: 20px;
             width: 100%;
@@ -287,57 +301,69 @@
         }
         .filter-section {
             display: flex;
-            gap: 16px;
+            gap: 12px;
             flex-wrap: wrap;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             align-items: flex-end;
         }
-        .filter-date {
-            flex: 0.33;
-            min-width: 100px;
-            position: relative;
-        }
-        .filter-search {
-            flex: 1;
-            min-width: 200px;
+        .filter-group {
             position: relative;
         }
         .filter-group label {
             display: block;
-            font-size: 0.7rem;
-            font-weight: 600;
-            color: #4a5568;
-            margin-bottom: 4px;
+            font-size: 0.65rem;
+            font-weight: 500;
+            color: #6c757d;
+            margin-bottom: 3px;
         }
         .filter-wrapper {
             position: relative;
             display: flex;
             align-items: center;
         }
-        .filter-wrapper input {
-            width: 100%;
-            padding: 8px 32px 8px 12px;
-            border-radius: 10px;
+        .filter-wrapper input, .filter-wrapper select {
+            padding: 6px 28px 6px 10px;
+            border-radius: 8px;
             border: 1px solid #d1d9e6;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             background: white;
+        }
+        .filter-date {
+            width: 130px;
+        }
+        .filter-modality {
+            width: 110px;
+        }
+        .filter-search {
+            width: 220px;
+        }
+        .sort-btn {
+            background: #f0f2f5;
+            border: 1px solid #d1d9e6;
+            padding: 6px 10px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+        .sort-btn:hover {
+            background: #e6e9ef;
         }
         .clear-filter {
             position: absolute;
-            right: 8px;
+            right: 6px;
             top: 50%;
             transform: translateY(-50%);
             background: none;
             border: none;
-            font-size: 1rem;
+            font-size: 0.9rem;
             cursor: pointer;
-            padding: 4px;
+            padding: 2px;
             color: #94a3b8;
+            width: 20px;
+            height: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 24px;
-            height: 24px;
             border-radius: 50%;
         }
         .clear-filter:hover {
@@ -351,18 +377,16 @@
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
             padding-right: 4px;
         }
         
-        /* Компактные карточки в одну строку */
         .data-card {
             background: #ffffff;
-            border-radius: 12px;
-            padding: 10px 16px;
+            border-radius: 10px;
+            padding: 8px 14px;
             border: 1px solid #e9edf2;
             transition: all 0.2s;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
             display: flex;
             flex-wrap: wrap;
             align-items: center;
@@ -371,7 +395,7 @@
         }
         .data-card:hover {
             border-color: #cbdde9;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
         }
         .card-item {
             display: inline-flex;
@@ -380,11 +404,16 @@
             white-space: nowrap;
         }
         .card-icon {
-            font-size: 0.95rem;
+            font-size: 0.9rem;
+            opacity: 0.8;
         }
         .card-text {
             color: #1a202c;
-            font-weight: 500;
+            font-weight: 400;
+        }
+        .card-text-bold {
+            color: #1a202c;
+            font-weight: 600;
         }
         .placeholder {
             text-align: center;
@@ -429,9 +458,9 @@
         @media (max-width: 780px) {
             body { padding: 1rem; }
             .app-dashboard { grid-template-columns: 1fr; gap: 20px; }
-            .filter-date { flex: 1; }
             .data-card { flex-direction: column; align-items: flex-start; white-space: normal; }
             .card-item { white-space: normal; }
+            .filter-date, .filter-modality, .filter-search { width: 100%; }
         }
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: #eef2f8; border-radius: 10px; }
@@ -448,9 +477,9 @@
         </div>
 
         <div class="form-group">
-            <div class="compact-field date-field" style="display: inline-flex; width: auto;">
+            <div class="compact-field date-field">
                 <span class="field-icon">📅</span>
-                <input type="datetime-local" id="dateTimeField" style="width: auto; min-width: 190px;">
+                <input type="date" id="dateField" placeholder="ДД.ММ.ГГГГ">
             </div>
         </div>
 
@@ -471,7 +500,7 @@
         </div>
 
         <div class="form-group">
-            <div class="section-label">📝 Название исследования (автозамена из списка)</div>
+            <div class="section-label">📝 Название исследования (автозамена)</div>
             <div class="compact-field" style="margin-top: 6px;">
                 <input type="text" id="studyNameField" placeholder="Например: кт грудной клетки" style="width: 100%;">
             </div>
@@ -480,7 +509,7 @@
         <div class="form-group">
             <div class="flex-between">
                 <div class="section-label">👨‍💻 Исполнитель</div>
-                <button type="button" id="editExecutorsBtn" style="background:none; border:none; color:#0078d4; text-decoration:underline; padding:0; font-size:0.75rem;">✏️ Редактировать список</button>
+                <button type="button" id="editExecutorsBtn" class="edit-link">✏️ Редактировать список</button>
             </div>
             <div id="executorRadiosContainer" class="executor-radios"></div>
         </div>
@@ -497,26 +526,44 @@
                 <input type="text" id="newFull" placeholder="полная фраза">
                 <button id="addAbbrevBtn">➕ Добавить</button>
             </div>
-            <div style="font-size: 0.7rem; color:#6c757d; margin-top: 8px;">Автозамена работает в реальном времени (наберите сокращение и пробел)</div>
+            <div style="font-size: 0.7rem; color:#6c757d; margin-top: 8px;">Автозамена работает в реальном времени</div>
         </div>
     </div>
 
     <div class="card-pane">
         <div class="viewer-header">
             <div class="filter-section">
-                <div class="filter-search">
+                <div class="filter-group filter-search">
                     <label>🔍 Поиск</label>
                     <div class="filter-wrapper">
-                        <input type="text" id="searchInput" placeholder="Поиск по ФИО, исследованию, исполнителю...">
-                        <button class="clear-filter" id="clearSearchBtn" title="Очистить">✖</button>
+                        <input type="text" id="searchInput" placeholder="Поиск...">
+                        <button class="clear-filter" id="clearSearchBtn">✖</button>
                     </div>
                 </div>
-                <div class="filter-date">
-                    <label>📅 Фильтр по дате</label>
+                <div class="filter-group filter-modality">
+                    <label>📡 Модальность</label>
+                    <div class="filter-wrapper">
+                        <select id="modalityFilter">
+                            <option value="">Все</option>
+                            <option value="РГ">📦 РГ</option>
+                            <option value="ФЛГ">🫁 ФЛГ</option>
+                            <option value="КТ">🖥️ КТ</option>
+                            <option value="МРТ">🧠 МРТ</option>
+                        </select>
+                        <button class="clear-filter" id="clearModalityFilter">✖</button>
+                    </div>
+                </div>
+                <div class="filter-group filter-date">
+                    <label>📅 Дата</label>
                     <div class="filter-wrapper">
                         <input type="date" id="dateFilterInput">
-                        <button class="clear-filter" id="clearDateFilter" title="Очистить">✖</button>
+                        <button class="clear-filter" id="clearDateFilter">✖</button>
                     </div>
+                </div>
+                <div class="filter-group">
+                    <label>📅 Сортировка</label>
+                    <button id="sortAscBtn" class="sort-btn" title="По возрастанию">⬆️📅</button>
+                    <button id="sortDescBtn" class="sort-btn" title="По убыванию">⬇️📅</button>
                 </div>
             </div>
         </div>
@@ -549,6 +596,7 @@
     let currentLoadedJson = null;
     let selectedFile = null;
     let selectedExecutor = '';
+    let currentSort = null; // 'asc' or 'desc'
 
     const STORAGE_EXECUTORS = 'paid_executors';
     const STORAGE_ABBREV = 'paid_abbreviations';
@@ -650,7 +698,7 @@
         document.querySelectorAll('.edit-abbrev').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const idx = parseInt(btn.getAttribute('data-idx'));
-                const newAbbr = prompt('Сокращение (например, кт):', abbreviations[idx].abbr);
+                const newAbbr = prompt('Сокращение:', abbreviations[idx].abbr);
                 if (newAbbr && newAbbr.trim()) {
                     const newFull = prompt('Полная фраза:', abbreviations[idx].full);
                     if (newFull && newFull.trim()) {
@@ -711,18 +759,16 @@
         }, 10);
     }
 
-    function setDefaultDateTime() {
+    function setDefaultDate() {
         const now = new Date();
         const year = now.getFullYear();
         const month = String(now.getMonth() + 1).padStart(2, '0');
         const day = String(now.getDate()).padStart(2, '0');
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        document.getElementById('dateTimeField').value = `${year}-${month}-${day}T${hours}:${minutes}`;
+        document.getElementById('dateField').value = `${year}-${month}-${day}`;
     }
 
     function getFormData() {
-        const dateRaw = document.getElementById('dateTimeField').value;
+        const dateRaw = document.getElementById('dateField').value;
         if (!dateRaw) throw new Error('Укажите дату');
         const fullName = document.getElementById('fullNameField').value.trim();
         if (!fullName) throw new Error('Введите ФИО');
@@ -737,32 +783,27 @@
         return { dateRaw, fullName, modality, studyName, executor };
     }
 
-    function formatDateTimeForFile(dateTimeStr) {
-        let dateObj = new Date(dateTimeStr);
-        if (isNaN(dateObj.getTime())) dateObj = new Date();
-        const day = dateObj.getDate();
+    function formatDateForDisplay(dateStr) {
+        if (!dateStr) return '—';
+        const [year, month, day] = dateStr.split('-');
+        return `${day}.${month}.${year}`;
+    }
+
+    function formatDateTimeForFile() {
+        const now = new Date();
+        const day = now.getDate();
         const months = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
-        const monthAbbr = months[dateObj.getMonth()];
-        const hours = String(dateObj.getHours()).padStart(2, '0');
-        const minutes = String(dateObj.getMinutes()).padStart(2, '0');
-        const seconds = String(new Date().getSeconds()).padStart(2, '0');
+        const monthAbbr = months[now.getMonth()];
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
         return `${day}${monthAbbr}_${hours}-${minutes}-${seconds}`;
     }
 
-    function formatDateTimeForDisplay(dateTimeStr) {
-        if (!dateTimeStr) return '—';
-        if (dateTimeStr.includes('T')) {
-            const [datePart, timePart] = dateTimeStr.split('T');
-            const [year, month, day] = datePart.split('-');
-            return `${day}.${month}.${year} ${timePart}`;
-        }
-        return dateTimeStr;
-    }
-
-    function generateFileName(modality, dateTimeStr) {
+    function generateFileName(modality) {
         const prefixMap = { 'РГ':'rg', 'ФЛГ':'flg', 'КТ':'ct', 'МРТ':'mrt' };
         const prefix = prefixMap[modality] || 'rg';
-        const dateTimeForFile = formatDateTimeForFile(dateTimeStr);
+        const dateTimeForFile = formatDateTimeForFile();
         return `PAID_${dateTimeForFile}.json`;
     }
 
@@ -770,7 +811,7 @@
         try {
             const formData = getFormData();
             const newRecord = {
-                dateTime: formData.dateRaw,
+                date: formData.dateRaw,
                 fullName: formData.fullName,
                 modality: formData.modality,
                 studyName: formData.studyName,
@@ -790,14 +831,10 @@
                 updatedData = [newRecord];
             }
 
-            // Обновляем currentLoadedJson новыми данными
             currentLoadedJson = updatedData;
-            
-            // Обновляем отображение в viewer
             filterAndRender();
             
-            // Сохраняем файл
-            const fileName = generateFileName(formData.modality, formData.dateRaw);
+            const fileName = generateFileName(formData.modality);
             const jsonStr = JSON.stringify(updatedData, null, 2);
             const blob = new Blob([jsonStr], { type: 'application/json' });
             const link = document.createElement('a');
@@ -820,7 +857,7 @@
         }
         
         let items = [];
-        if (Array.isArray(currentLoadedJson)) items = currentLoadedJson;
+        if (Array.isArray(currentLoadedJson)) items = [...currentLoadedJson];
         else if (currentLoadedJson && typeof currentLoadedJson === 'object') items = [currentLoadedJson];
         else {
             document.getElementById('jsonViewerContainer').innerHTML = '<div class="placeholder">⚠️ Некорректный формат данных</div>';
@@ -829,32 +866,28 @@
 
         const dateFilter = document.getElementById('dateFilterInput').value;
         const searchText = document.getElementById('searchInput').value.trim().toLowerCase();
+        const modalityFilter = document.getElementById('modalityFilter').value;
 
-        const filtered = items.filter(item => {
-            if (dateFilter) {
-                let itemDate = item.dateTime || '';
-                let formattedDate = '';
-                if (itemDate && itemDate.includes('T')) {
-                    const [datePart] = itemDate.split('T');
-                    formattedDate = datePart;
-                } else {
-                    formattedDate = itemDate.split(' ')[0];
-                }
-                if (formattedDate !== dateFilter) return false;
-            }
-            
+        let filtered = items.filter(item => {
+            if (dateFilter && item.date !== dateFilter) return false;
+            if (modalityFilter && item.modality !== modalityFilter) return false;
             if (searchText) {
                 const fullName = (item.fullName || '').toLowerCase();
                 const studyName = (item.studyName || '').toLowerCase();
                 const executor = (item.executor || '').toLowerCase();
-                const modality = (item.modality || '').toLowerCase();
-                if (!fullName.includes(searchText) && !studyName.includes(searchText) && 
-                    !executor.includes(searchText) && !modality.includes(searchText)) {
+                if (!fullName.includes(searchText) && !studyName.includes(searchText) && !executor.includes(searchText)) {
                     return false;
                 }
             }
             return true;
         });
+
+        // Сортировка по дате
+        if (currentSort === 'asc') {
+            filtered.sort((a, b) => (a.date || '').localeCompare(b.date || ''));
+        } else if (currentSort === 'desc') {
+            filtered.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+        }
 
         renderJsonCards(filtered);
     }
@@ -879,7 +912,7 @@
             const card = document.createElement('div');
             card.className = 'data-card';
             
-            const displayDate = formatDateTimeForDisplay(record.dateTime);
+            const displayDate = formatDateForDisplay(record.date);
             const modalityEmoji = getModalityEmoji(record.modality);
             const fullName = record.fullName || '—';
             const studyName = record.studyName || 'Не указано';
@@ -888,7 +921,7 @@
             
             card.innerHTML = `
                 <div class="card-item"><span class="card-icon">📅</span><span class="card-text">${escapeHtml(displayDate)}</span></div>
-                <div class="card-item"><span class="card-icon">👤</span><span class="card-text">${escapeHtml(fullName)}</span></div>
+                <div class="card-item"><span class="card-icon">👤</span><span class="card-text-bold">${escapeHtml(fullName)}</span></div>
                 <div class="card-item"><span class="card-icon">${modalityEmoji}</span><span class="card-text">${escapeHtml(modality)}</span></div>
                 <div class="card-item"><span class="card-icon">📝</span><span class="card-text">${escapeHtml(studyName)}</span></div>
                 <div class="card-item"><span class="card-icon">👨‍💻</span><span class="card-text">${escapeHtml(executor)}</span></div>
@@ -1013,19 +1046,27 @@
                 selectedFile = null;
                 currentLoadedJson = null;
                 updateFileNameDisplay(null);
-                document.getElementById('jsonViewerContainer').innerHTML = '<div class="placeholder">✨ Выберите JSON-файл, чтобы увидеть карточки</div>';
+                document.getElementById('jsonViewerContainer').innerHTML = '<div class="placeholder">✨ Выберите JSON-файл</div>';
             }
         });
 
         const dateFilter = document.getElementById('dateFilterInput');
         const searchInput = document.getElementById('searchInput');
+        const modalityFilter = document.getElementById('modalityFilter');
         const clearDateBtn = document.getElementById('clearDateFilter');
         const clearSearchBtn = document.getElementById('clearSearchBtn');
+        const clearModalityBtn = document.getElementById('clearModalityFilter');
+        const sortAscBtn = document.getElementById('sortAscBtn');
+        const sortDescBtn = document.getElementById('sortDescBtn');
         
         dateFilter.addEventListener('input', filterAndRender);
         searchInput.addEventListener('input', filterAndRender);
+        modalityFilter.addEventListener('change', filterAndRender);
         clearDateBtn.addEventListener('click', () => { dateFilter.value = ''; filterAndRender(); });
         clearSearchBtn.addEventListener('click', () => { searchInput.value = ''; filterAndRender(); });
+        clearModalityBtn.addEventListener('click', () => { modalityFilter.value = ''; filterAndRender(); });
+        sortAscBtn.addEventListener('click', () => { currentSort = 'asc'; filterAndRender(); });
+        sortDescBtn.addEventListener('click', () => { currentSort = 'desc'; filterAndRender(); });
 
         document.getElementById('addAbbrevBtn').addEventListener('click', () => {
             const abbr = document.getElementById('newAbbr').value.trim().toLowerCase();
@@ -1048,7 +1089,7 @@
     function init() {
         loadExecutors();
         loadAbbreviations();
-        setDefaultDateTime();
+        setDefaultDate();
         setupEventListeners();
         currentLoadedJson = null;
         selectedFile = null;
